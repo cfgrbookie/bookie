@@ -1,2 +1,0 @@
-# bookie
-Journal de Bookie
