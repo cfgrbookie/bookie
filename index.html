@@ -1,0 +1,2660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Journal de Bookie</title>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf6ed;
+    --cream-2: #f2ebd9;
+    --paper: #ebe1c9;
+    --ink: #2a1f17;
+    --ink-soft: #4a3a2c;
+    --rust: #c44d2a;
+    --rust-deep: #9a3818;
+    --amber: #d4922a;
+    --olive: #6b7a3a;
+    --olive-deep: #4a5524;
+    --sky: #4a7a8f;
+    --plum: #7a3a55;
+    --dust: #b8a585;
+    --shadow: rgba(42, 31, 23, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--cream);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(212, 146, 42, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(122, 58, 85, 0.05) 0%, transparent 40%);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 0 0.09 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none; opacity: 0.6; z-index: 1;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 24px 16px 80px; position: relative; z-index: 2; }
+
+  .cover { text-align: center; padding: 40px 0 30px; }
+
+  .cover-stamp {
+    display: inline-block; border: 2px solid var(--rust); color: var(--rust);
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.25em;
+    text-transform: uppercase; padding: 4px 12px;
+    transform: rotate(-3deg); margin-bottom: 20px; font-weight: 700;
+  }
+
+  .cover-title {
+    font-family: 'Caprasimo', serif; font-size: clamp(48px, 12vw, 88px); line-height: 0.88;
+    color: var(--ink); letter-spacing: -0.02em; margin-bottom: 6px;
+  }
+
+  .cover-title .ampersand {
+    color: var(--rust); font-style: italic;
+    display: inline-block; transform: rotate(-8deg); margin: 0 4px;
+  }
+
+  .cover-name {
+    font-family: 'Caprasimo', serif; font-size: clamp(64px, 16vw, 120px);
+    color: var(--rust); line-height: 0.88;
+    letter-spacing: -0.03em; margin-bottom: 16px;
+    position: relative; display: inline-block;
+  }
+
+  .cover-name::after {
+    content: ''; position: absolute;
+    left: -5%; right: -5%; bottom: 12%; height: 8px;
+    background: var(--amber); z-index: -1;
+    opacity: 0.4; transform: rotate(-1deg);
+  }
+
+  .cover-sub {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.3em;
+    text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px;
+  }
+
+  .cover-tagline {
+    font-style: italic; font-size: 15px;
+    color: var(--ink-soft); max-width: 480px; margin: 0 auto;
+  }
+
+  .cover-authors {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--ink-soft);
+    margin-top: 20px; opacity: 0.7;
+  }
+
+  .cover-authors strong { color: var(--rust); font-weight: 700; }
+
+  /* Disclaimer doux après cover */
+  .disclaimer {
+    background: var(--cream-2);
+    border: 1px dashed var(--dust);
+    padding: 14px 18px;
+    margin: 24px 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    text-align: center;
+    font-style: italic;
+  }
+  .disclaimer strong { color: var(--rust); font-style: normal; font-weight: 700; }
+
+  .manifesto {
+    margin: 36px 0;
+    background: var(--olive-deep); color: var(--cream);
+    padding: 36px 28px; position: relative;
+  }
+
+  .manifesto-tag {
+    position: absolute; top: -10px; left: 28px;
+    background: var(--cream); color: var(--olive-deep);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em; padding: 4px 10px; font-weight: 700;
+  }
+
+  .manifesto-title {
+    font-family: 'Caprasimo', serif; font-size: 30px;
+    margin-bottom: 6px; color: var(--cream);
+  }
+
+  .manifesto-sub {
+    font-family: 'DM Sans', sans-serif; font-style: italic;
+    font-size: 14px; opacity: 0.8; margin-bottom: 20px;
+  }
+
+  .manifesto-intro {
+    font-size: 14px; line-height: 1.65; opacity: 0.92;
+    margin-bottom: 22px; padding-bottom: 18px;
+    border-bottom: 1px dotted rgba(250, 246, 237, 0.3);
+  }
+
+  .principe {
+    padding: 12px 0;
+    border-bottom: 1px dotted rgba(250, 246, 237, 0.25);
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .principe:last-child { border-bottom: none; }
+
+  .principe-num {
+    font-family: 'Caprasimo', serif; font-size: 22px;
+    color: var(--amber); line-height: 1; min-width: 28px;
+  }
+
+  .principe-content { flex: 1; }
+  .principe-title { font-family: 'Caprasimo', serif; font-size: 17px; margin-bottom: 4px; }
+  .principe-text { font-size: 13px; line-height: 1.5; opacity: 0.88; }
+
+  /* ---- Materiel kit ---- */
+  .materiel {
+    margin: 36px 0;
+    background: var(--plum); color: var(--cream);
+    padding: 30px 26px; position: relative;
+  }
+
+  .materiel-tag {
+    position: absolute; top: -10px; left: 26px;
+    background: var(--cream); color: var(--plum);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em; padding: 4px 10px; font-weight: 700;
+  }
+
+  .materiel-title {
+    font-family: 'Caprasimo', serif; font-size: 26px;
+    margin-bottom: 4px; color: var(--cream);
+  }
+
+  .materiel-sub {
+    font-family: 'DM Sans', sans-serif; font-style: italic;
+    font-size: 13px; opacity: 0.85; margin-bottom: 16px;
+  }
+
+  .materiel-cat {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dotted rgba(250, 246, 237, 0.25);
+  }
+  .materiel-cat:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+  .materiel-cat-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber); margin-bottom: 8px; font-weight: 700;
+  }
+
+  .materiel-task {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 4px 0; cursor: pointer;
+  }
+
+  .materiel-task input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 16px; height: 16px; min-width: 16px;
+    border: 1.5px solid var(--cream);
+    background: transparent; cursor: pointer; position: relative;
+    margin-top: 3px; transition: all 0.18s; border-radius: 3px;
+  }
+
+  .materiel-task input[type="checkbox"]:checked {
+    background: var(--amber); border-color: var(--amber);
+  }
+
+  .materiel-task input[type="checkbox"]:checked::after {
+    content: ''; position: absolute;
+    top: 0; left: 4px; width: 4px; height: 8px;
+    border: solid var(--plum); border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .materiel-task-text { flex: 1; font-size: 13.5px; line-height: 1.4; }
+  .materiel-task input:checked ~ .materiel-task-text { opacity: 0.5; text-decoration: line-through; }
+
+  .global-bar {
+    background: var(--ink); color: var(--cream);
+    padding: 20px 24px; margin: 32px 0 32px;
+    position: relative; box-shadow: 5px 5px 0 var(--amber);
+  }
+
+  .global-bar-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .global-bar-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.6; }
+  .global-bar-count { font-family: 'Caprasimo', serif; font-size: 28px; color: var(--amber); }
+  .global-bar-track { height: 4px; background: rgba(250, 246, 237, 0.15); overflow: hidden; }
+  .global-bar-fill { height: 100%; background: var(--amber); transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .global-bar-stats { display: flex; gap: 18px; margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.7; flex-wrap: wrap; }
+  .global-bar-stats span strong { color: var(--amber); font-size: 13px; margin-right: 4px; }
+
+  .jump-nav { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 36px; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+  .jump-nav::-webkit-scrollbar { height: 4px; }
+  .jump-nav::-webkit-scrollbar-thumb { background: var(--dust); }
+  .jump-pill {
+    flex-shrink: 0; padding: 7px 14px;
+    background: var(--cream-2); border: 1.5px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
+    cursor: pointer; text-decoration: none; font-weight: 500; transition: all 0.15s;
+  }
+  .jump-pill:hover { background: var(--ink); color: var(--cream); }
+
+  .phase { margin-bottom: 56px; position: relative; }
+
+  .phase-header {
+    display: flex; align-items: flex-end; gap: 16px;
+    margin-bottom: 8px; padding-bottom: 12px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .phase-num {
+    font-family: 'Caprasimo', serif; font-size: 64px;
+    line-height: 0.8; color: var(--rust); letter-spacing: -0.04em;
+  }
+
+  .phase-title-block { flex: 1; }
+  .phase-title { font-family: 'Caprasimo', serif; font-size: clamp(24px, 5vw, 34px); line-height: 1; color: var(--ink); letter-spacing: -0.02em; margin-bottom: 4px; }
+  .phase-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .phase-narrative { font-size: 15px; line-height: 1.65; color: var(--ink); margin: 20px 0 18px; }
+  .phase-narrative p { margin-bottom: 12px; }
+  .phase-narrative p:last-child { margin-bottom: 0; }
+
+  .phase-summary {
+    background: var(--cream-2);
+    border-left: 4px solid var(--amber);
+    padding: 16px 18px;
+    margin: 22px 0 30px;
+  }
+
+  .phase-summary-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--rust); font-weight: 700; margin-bottom: 10px;
+  }
+
+  .phase-summary-content { font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+  .phase-summary-content p { margin-bottom: 8px; }
+  .phase-summary-content p:last-child { margin-bottom: 0; }
+
+  .week {
+    margin-bottom: 18px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--paper);
+    position: relative; box-shadow: 0 1px 0 var(--shadow);
+  }
+
+  .week-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; cursor: pointer; user-select: none;
+    background: var(--cream-2); border-bottom: 1px solid var(--paper);
+  }
+  .week-head:hover { background: var(--paper); }
+
+  .week-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.18em; background: var(--ink); color: var(--cream);
+    padding: 3px 8px; font-weight: 700;
+  }
+
+  .week-title { font-family: 'Caprasimo', serif; font-size: 18px; color: var(--ink); letter-spacing: -0.01em; flex: 1; }
+  .week-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft); font-weight: 700; }
+
+  .week-chevron {
+    width: 14px; height: 14px;
+    border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+    transform: rotate(45deg); transition: transform 0.25s ease;
+    margin-bottom: 4px; margin-left: 4px;
+  }
+  .week.open .week-chevron { transform: rotate(-135deg); margin-bottom: -2px; }
+
+  .week-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .week.open .week-body { max-height: 12000px; }
+  .week-body-inner { padding: 18px; }
+
+  .week-progress-track { height: 3px; background: var(--paper); margin: 0 18px; overflow: hidden; }
+  .week-progress-fill { height: 100%; background: var(--olive); transition: width 0.3s ease; }
+
+  .task-block { margin-bottom: 18px; }
+  .task-block:last-child { margin-bottom: 0; }
+
+  .task-block-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700;
+    color: var(--ink); margin-bottom: 10px;
+    padding-bottom: 4px; border-bottom: 1px dotted var(--dust);
+  }
+
+  .task-block-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; font-size: 12px;
+  }
+
+  .icon-health { background: rgba(196, 77, 42, 0.15); color: var(--rust); }
+  .icon-solo { background: rgba(122, 58, 85, 0.15); color: var(--plum); }
+  .icon-learn { background: rgba(107, 122, 58, 0.15); color: var(--olive-deep); }
+  .icon-social { background: rgba(74, 122, 143, 0.15); color: var(--sky); }
+  .icon-life { background: rgba(212, 146, 42, 0.18); color: #a06a14; }
+  .icon-walk { background: rgba(74, 85, 36, 0.15); color: var(--olive-deep); }
+  .icon-game { background: rgba(212, 146, 42, 0.18); color: #a06a14; }
+  .icon-care { background: rgba(196, 77, 42, 0.15); color: var(--rust); }
+  .icon-mind { background: rgba(122, 58, 85, 0.15); color: var(--plum); }
+  .icon-place { background: rgba(74, 122, 143, 0.15); color: var(--sky); }
+  .icon-feel { background: rgba(196, 77, 42, 0.15); color: var(--rust); }
+  .icon-sound { background: rgba(74, 85, 36, 0.15); color: var(--olive-deep); }
+  .icon-event { background: rgba(212, 146, 42, 0.18); color: #a06a14; }
+
+  .task {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 5px 4px; cursor: pointer; transition: background 0.12s;
+    border-radius: 3px;
+  }
+  .task:hover { background: rgba(212, 146, 42, 0.06); }
+
+  .task input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px; min-width: 18px;
+    border: 1.5px solid var(--ink); background: var(--cream);
+    cursor: pointer; position: relative; margin-top: 2px;
+    transition: all 0.18s; border-radius: 3px;
+  }
+
+  .task input[type="checkbox"]:checked {
+    background: var(--olive); border-color: var(--olive);
+  }
+
+  .task input[type="checkbox"]:checked::after {
+    content: ''; position: absolute;
+    top: 1px; left: 5px; width: 5px; height: 9px;
+    border: solid var(--cream); border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .task-text { flex: 1; font-size: 14px; line-height: 1.4; color: var(--ink); padding-top: 1px; }
+  .task input:checked ~ .task-text { text-decoration: line-through; opacity: 0.5; }
+
+  .achievements {
+    margin: 36px 0; padding: 28px 24px;
+    background: var(--ink); color: var(--cream); position: relative;
+  }
+
+  .achievements::before {
+    content: '★'; position: absolute; top: -14px; right: 28px;
+    background: var(--amber); color: var(--ink);
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; transform: rotate(15deg);
+  }
+
+  .achievements-header { margin-bottom: 20px; }
+  .achievements-title { font-family: 'Caprasimo', serif; font-size: 28px; color: var(--amber); margin-bottom: 4px; }
+  .achievements-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.6; }
+
+  .badges-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 10px; }
+
+  .badge {
+    aspect-ratio: 1;
+    background: rgba(250, 246, 237, 0.05);
+    border: 1.5px dashed rgba(250, 246, 237, 0.25);
+    padding: 10px 6px; text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; user-select: none; position: relative;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .badge:hover { background: rgba(250, 246, 237, 0.1); }
+
+  .badge.unlocked {
+    background: var(--amber); color: var(--ink);
+    border: 1.5px solid var(--ink); transform: rotate(-2deg);
+  }
+  .badge.unlocked:nth-child(3n) { transform: rotate(2deg); }
+  .badge.unlocked:nth-child(5n) { transform: rotate(-1deg); }
+  .badge.unlocked:hover { transform: rotate(0deg) scale(1.06); }
+
+  .badge-icon { font-size: 28px; margin-bottom: 4px; opacity: 0.3; transition: opacity 0.3s; }
+  .badge.unlocked .badge-icon { opacity: 1; }
+
+  .badge-name { font-family: 'Caprasimo', serif; font-size: 13px; line-height: 1; letter-spacing: -0.01em; }
+  .badge-desc { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; opacity: 0.7; line-height: 1.2; }
+
+  .badge.unlocked::after {
+    content: '✓'; position: absolute; top: 4px; right: 6px;
+    font-size: 11px; color: var(--rust); font-weight: 700;
+  }
+
+  /* Surstimulation block */
+  .surstim {
+    margin: 40px 0 30px;
+    padding: 28px 24px;
+    background: var(--cream-2);
+    border-left: 5px solid var(--plum);
+    position: relative;
+  }
+
+  .surstim-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--plum); font-weight: 700; margin-bottom: 6px;
+  }
+
+  .surstim-title {
+    font-family: 'Caprasimo', serif; font-size: 26px;
+    color: var(--ink); margin-bottom: 10px;
+  }
+
+  .surstim-intro {
+    font-size: 14px; line-height: 1.6; color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .surstim-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rust); font-weight: 700; margin: 14px 0 8px;
+  }
+
+  .surstim ul { list-style: none; padding: 0; }
+  .surstim li {
+    padding: 5px 0 5px 22px; position: relative;
+    font-size: 13.5px; line-height: 1.45; color: var(--ink-soft);
+  }
+  .surstim li::before {
+    content: '•'; position: absolute; left: 4px; top: 4px;
+    color: var(--plum); font-weight: 700; font-size: 16px;
+  }
+  .surstim li strong { color: var(--ink); font-weight: 700; }
+
+  /* ============ JOURNAL LIBRE ============ */
+  .logbook {
+    margin: 36px 0;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--paper);
+    position: relative;
+    box-shadow: 0 1px 0 var(--shadow);
+  }
+
+  .logbook-header {
+    display: flex; align-items: flex-end; gap: 16px;
+    padding: 22px 22px 12px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .logbook-title {
+    font-family: 'Caprasimo', serif;
+    font-size: clamp(24px, 5vw, 32px);
+    color: var(--ink); line-height: 1;
+    letter-spacing: -0.02em;
+    flex: 1;
+  }
+
+  .logbook-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  .logbook-icon {
+    font-family: 'Caprasimo', serif;
+    font-size: 52px;
+    color: var(--rust); line-height: 0.8;
+  }
+
+  .logbook-intro {
+    padding: 14px 22px 0;
+    font-size: 13.5px; line-height: 1.55;
+    color: var(--ink-soft); font-style: italic;
+  }
+
+  /* === Composer === */
+  .composer {
+    padding: 18px 22px;
+    background: var(--cream-2);
+    border-bottom: 1px solid var(--paper);
+    margin: 12px 0 0;
+  }
+
+  .composer-textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--ink);
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    resize: vertical;
+    outline: none;
+    border-radius: 0;
+    transition: box-shadow 0.2s;
+  }
+
+  .composer-textarea:focus {
+    box-shadow: 4px 4px 0 var(--amber);
+    background: white;
+  }
+
+  .composer-quick {
+    display: flex; gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .quick-btn {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    background: var(--cream);
+    border: 1.5px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--ink);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+
+  .quick-btn:hover {
+    background: var(--ink); color: var(--cream);
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0 var(--amber);
+  }
+
+  .quick-btn .qb-emoji { font-size: 14px; }
+
+  .composer-actions {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .composer-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft); opacity: 0.7;
+  }
+
+  .composer-author {
+    display: flex; gap: 4px; align-items: center;
+  }
+
+  .author-pill {
+    padding: 4px 10px;
+    background: var(--cream);
+    border: 1.5px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    color: var(--ink);
+  }
+
+  .author-pill.active {
+    background: var(--ink); color: var(--cream);
+  }
+
+  .composer-submit {
+    padding: 9px 18px;
+    background: var(--rust); color: var(--cream);
+    border: 1.5px solid var(--rust);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .composer-submit:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .composer-submit:disabled {
+    opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none;
+  }
+
+  /* === Entries list === */
+  .logbook-entries {
+    padding: 8px 0 18px;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+
+  .logbook-empty {
+    padding: 40px 22px;
+    text-align: center;
+    color: var(--ink-soft); opacity: 0.6;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  .day-group {
+    padding: 14px 22px 8px;
+    border-bottom: 1px dotted var(--paper);
+  }
+
+  .day-group:last-child { border-bottom: none; }
+
+  .day-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; font-weight: 700;
+    color: var(--rust); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .day-label::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--paper);
+  }
+
+  .day-stats {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.1em;
+    color: var(--ink-soft); font-weight: 400;
+    opacity: 0.7; text-transform: none;
+    margin-left: 6px;
+  }
+
+  .entry {
+    display: flex; gap: 12px;
+    padding: 8px 0;
+    position: relative;
+    align-items: flex-start;
+  }
+
+  .entry:hover .entry-delete { opacity: 1; }
+
+  .entry-time {
+    flex: 0 0 50px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: var(--ink-soft);
+    padding-top: 1px;
+    text-align: right;
+  }
+
+  .entry-content {
+    flex: 1;
+    font-size: 14px; line-height: 1.45;
+    color: var(--ink);
+    word-wrap: break-word;
+    cursor: text;
+  }
+
+  .entry-content[contenteditable="true"] {
+    background: var(--cream);
+    padding: 6px 8px;
+    border: 1px solid var(--ink);
+    outline: none;
+  }
+
+  .entry.is-quick .entry-content {
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .entry-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    margin-right: 6px;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; font-weight: 700;
+    vertical-align: middle;
+  }
+
+  .entry-tag.pee { background: rgba(74, 122, 143, 0.25); color: var(--sky); }
+  .entry-tag.poop { background: rgba(122, 58, 85, 0.2); color: var(--plum); }
+  .entry-tag.eat { background: rgba(212, 146, 42, 0.25); color: #a06a14; }
+  .entry-tag.walk { background: rgba(107, 122, 58, 0.25); color: var(--olive-deep); }
+  .entry-tag.sleep { background: rgba(42, 31, 23, 0.15); color: var(--ink); }
+  .entry-tag.note { background: var(--paper); color: var(--ink); }
+
+  .entry-author {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.1em;
+    color: var(--ink-soft); opacity: 0.5;
+    margin-left: 6px; text-transform: uppercase;
+  }
+
+  .entry-delete {
+    flex: 0 0 auto;
+    width: 22px; height: 22px;
+    background: none; border: none;
+    color: var(--rust); cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .entry-delete:hover { opacity: 1 !important; transform: scale(1.2); }
+
+  /* Touch devices: always show delete */
+  @media (hover: none) {
+    .entry-delete { opacity: 0.4; }
+  }
+
+  .redflags {
+    margin: 40px 0 30px;
+    padding: 26px 24px;
+    background: var(--cream-2);
+    border-left: 5px solid var(--rust);
+  }
+  .redflags-title { font-family: 'Caprasimo', serif; font-size: 24px; color: var(--rust-deep); margin-bottom: 12px; }
+  .redflags-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 14px; }
+  .redflags ul { list-style: none; padding: 0; }
+  .redflags li { padding: 5px 0 5px 22px; position: relative; font-size: 13.5px; line-height: 1.4; }
+  .redflags li::before {
+    content: '!'; position: absolute; left: 0; top: 5px;
+    width: 16px; height: 16px;
+    background: var(--rust); color: var(--cream); border-radius: 50%;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .footer { text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid var(--paper); }
+  .footer-mark { font-family: 'Caprasimo', serif; font-size: 22px; color: var(--rust); margin-bottom: 6px; }
+  .footer-text { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-soft); opacity: 0.6; margin-bottom: 24px; }
+  .reset-btn {
+    background: none; border: 1px solid var(--ink); color: var(--ink);
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 7px 14px; cursor: pointer; opacity: 0.4; transition: opacity 0.2s;
+  }
+  .reset-btn:hover { opacity: 1; }
+
+  @keyframes pop {
+    0% { transform: scale(1) rotate(-2deg); }
+    40% { transform: scale(1.18) rotate(4deg); }
+    100% { transform: scale(1) rotate(-2deg); }
+  }
+  .badge.just-unlocked { animation: pop 0.6s ease; }
+
+  @keyframes confetti-fall {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--tx, 0), 100vh) rotate(720deg); opacity: 0; }
+  }
+  .confetti { position: fixed; width: 8px; height: 8px; pointer-events: none; z-index: 9999; animation: confetti-fall 2s linear forwards; }
+
+  .loading { text-align: center; padding: 80px 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.4; }
+
+  @media (max-width: 480px) {
+    .phase-num { font-size: 48px; }
+    .week-head { padding: 12px 14px; }
+    .week-body-inner { padding: 14px; }
+  }
+
+  /* === LOCK SCREEN === */
+  .lock-screen {
+    position: fixed; inset: 0;
+    background: var(--cream);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(212, 146, 42, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(122, 58, 85, 0.05) 0%, transparent 40%);
+    z-index: 10000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px; text-align: center;
+  }
+
+  .lock-paw {
+    font-size: 56px;
+    margin-bottom: 16px;
+    display: inline-block;
+    transform: rotate(-12deg);
+  }
+
+  .lock-title {
+    font-family: 'Caprasimo', serif;
+    font-size: clamp(40px, 10vw, 64px);
+    color: var(--rust);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .lock-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 36px;
+  }
+
+  .lock-form {
+    display: flex; flex-direction: column;
+    gap: 12px; width: 100%; max-width: 320px;
+  }
+
+  .lock-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    border-radius: 0;
+    outline: none;
+    transition: all 0.2s;
+    text-align: center;
+    letter-spacing: 0.08em;
+  }
+
+  .lock-input:focus {
+    background: white;
+    box-shadow: 4px 4px 0 var(--amber);
+    transform: translate(-2px, -2px);
+  }
+
+  .lock-btn {
+    padding: 14px 24px;
+    background: var(--ink);
+    color: var(--cream);
+    border: 2px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .lock-btn:hover {
+    background: var(--rust);
+    border-color: var(--rust);
+  }
+
+  .lock-error {
+    color: var(--rust);
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 8px;
+    min-height: 18px;
+  }
+
+  .lock-footer {
+    margin-top: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft); opacity: 0.5;
+  }
+
+  /* === SYNC INDICATOR === */
+  .sync-indicator {
+    position: fixed;
+    bottom: 16px; right: 16px;
+    background: var(--ink); color: var(--cream);
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 9998;
+    pointer-events: none;
+  }
+
+  .sync-indicator.visible { opacity: 0.9; }
+  .sync-indicator.error { background: var(--rust); }
+
+  .sync-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    margin-right: 6px;
+    vertical-align: middle;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOCK SCREEN ============ -->
+<div id="lockScreen" class="lock-screen">
+  <div class="lock-paw">🐾</div>
+  <h1 class="lock-title">Bookie</h1>
+  <div class="lock-sub">Carnet privé · Mot de passe requis</div>
+  <form class="lock-form" id="lockForm" onsubmit="return false;">
+    <input type="password" id="lockInput" class="lock-input" placeholder="Mot de passe" autocomplete="off" autofocus>
+    <button type="submit" class="lock-btn" id="lockBtn">Ouvrir le carnet</button>
+    <div class="lock-error" id="lockError"></div>
+  </form>
+  <div class="lock-footer">Gabrielle &amp; Clément · 2026</div>
+</div>
+
+<!-- ============ SYNC INDICATOR ============ -->
+<div id="syncIndicator" class="sync-indicator"><span class="sync-dot"></span><span id="syncText">Synchronisé</span></div>
+
+<div class="container">
+
+  <header class="cover">
+    <div class="cover-stamp">Carnet de bord · Édition Bookie</div>
+    <h1 class="cover-title">Le journal <span class="ampersand">de</span></h1>
+    <div class="cover-name">Bookie</div>
+    <div class="cover-sub">— Berger Américain Miniature · 2 → 12 mois —</div>
+    <p class="cover-tagline">Le carnet de bord pour faire de Bookie une compagne équilibrée, attachante, et toujours partante : bar, train, rando, café, partout.</p>
+    <div class="cover-authors">Tenu par <strong>Gabrielle</strong> &amp; <strong>Clément</strong></div>
+  </header>
+
+  <div id="loading" class="loading">Ouverture du carnet…</div>
+
+  <div id="content" style="display:none;">
+
+    <div class="disclaimer">
+      Ce carnet est un <strong>guide</strong>, pas une obligation. Les timings sont indicatifs, chaque chien évolue à son rythme. Bookie ne cochera peut-être pas tout au bon moment, et ce n'est pas grave. L'objectif est de garder le cap, pas de courir après les cases.
+    </div>
+
+    <section class="manifesto">
+      <span class="manifesto-tag">Le BAM heureux</span>
+      <h2 class="manifesto-title">Qui est Bookie ?</h2>
+      <div class="manifesto-sub">Comprendre la race pour mieux vivre ensemble</div>
+
+      <div class="manifesto-intro">
+        Le Berger Américain Miniature est un chien de travail miniaturisé : intelligence vive, sensibilité haute, attachement profond à sa famille. Un BAM heureux n'est pas un BAM épuisé physiquement, c'est un BAM <strong>mentalement stimulé, socialement à l'aise, et émotionnellement sécurisé</strong>. Il vous suit partout, vous lit comme un livre ouvert, anticipe vos déplacements. En contrepartie, il a besoin que vous l'incluiez dans votre vie, pas que vous l'occupiez par à-côté. Bien élevé, c'est un compagnon discret, fiable et joyeux. Mal élevé, c'est un chien anxieux, vocal et destructeur. Tout se joue entre 2 et 12 mois.
+      </div>
+
+      <div class="principe">
+        <span class="principe-num">01</span>
+        <div class="principe-content">
+          <div class="principe-title">Cerveau avant muscle</div>
+          <div class="principe-text">10 min de jeu de réflexion fatiguent Bookie plus que 30 min de balade. Sans stimulation mentale, elle s'invente des occupations. Devinez lesquelles.</div>
+        </div>
+      </div>
+      <div class="principe">
+        <span class="principe-num">02</span>
+        <div class="principe-content">
+          <div class="principe-title">Velcro dog</div>
+          <div class="principe-text">Race ultra-attachée. La solitude se travaille tôt et par paliers. C'est cette étape qui déterminera sa stabilité émotionnelle adulte.</div>
+        </div>
+      </div>
+      <div class="principe">
+        <span class="principe-num">03</span>
+        <div class="principe-content">
+          <div class="principe-title">Instinct de berger</div>
+          <div class="principe-text">Elle peut pincer les mollets, fixer, rassembler. À canaliser dès le début vers des activités constructives plutôt que vers vos talons.</div>
+        </div>
+      </div>
+      <div class="principe">
+        <span class="principe-num">04</span>
+        <div class="principe-content">
+          <div class="principe-title">Hyper-sensibilité</div>
+          <div class="principe-text">Éducation positive uniquement. Cris, coercition, soumission la briseraient durablement. Récompense, patience, répétition, c'est tout.</div>
+        </div>
+      </div>
+      <div class="principe">
+        <span class="principe-num">05</span>
+        <div class="principe-content">
+          <div class="principe-title">Énergie modulable</div>
+          <div class="principe-text">Bien dépensée, calme à la maison. Mal dépensée, c'est un missile. Variez les activités, pas que deux balades fixes par jour.</div>
+        </div>
+      </div>
+      <div class="principe">
+        <span class="principe-num">06</span>
+        <div class="principe-content">
+          <div class="principe-title">Vocale de nature</div>
+          <div class="principe-text">Elle communique beaucoup. L'objectif n'est pas de la faire taire mais de lui apprendre quand c'est OK et quand non. "Silence" sur ordre, dès tôt.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SURSTIMULATION BLOCK ============ -->
+    <section class="surstim">
+      <div class="surstim-tag">Spécial BAM</div>
+      <h2 class="surstim-title">La surstimulation, le piège n°1</h2>
+      <p class="surstim-intro">
+        Les BAM sont des chiens à haute énergie qui peuvent s'auto-exciter sans s'en rendre compte. Beaucoup de chiots de cette race sont victimes de surstimulation chronique : ils n'arrivent plus à se poser, deviennent ingérables, et leurs maîtres pensent qu'ils ne dépensent pas assez. C'est souvent l'inverse. <strong>Un chiot doit dormir 18 à 20h par jour</strong>. Si Bookie est agitée en permanence, c'est probablement parce qu'elle est épuisée et qu'elle a besoin de calme, pas d'activité.
+      </p>
+
+      <div class="surstim-sub">Signes de surstimulation</div>
+      <ul>
+        <li><strong>Zoomies incontrôlables</strong> (courses folles, plusieurs fois par jour, sans déclencheur)</li>
+        <li><strong>Mordillements qui deviennent excessifs</strong>, voire douloureux, et qui ne se calment pas avec une redirection</li>
+        <li><strong>Incapacité à se poser</strong>, même après une longue balade</li>
+        <li><strong>Aboiements répétitifs</strong> sans raison apparente</li>
+        <li><strong>Yeux écarquillés, pupilles dilatées</strong>, queue qui s'agite très haut</li>
+        <li><strong>Refus du contact</strong> ou au contraire collage anormal</li>
+        <li><strong>Sommeil fragmenté</strong> ou très court (sieste de 10 min puis ré-excitation)</li>
+      </ul>
+
+      <div class="surstim-sub">Quoi faire</div>
+      <ul>
+        <li><strong>Réduire les stimulations</strong> au lieu de les augmenter : moins de jeu, plus de calme</li>
+        <li><strong>Imposer des siestes</strong> dans un endroit calme et sombre (caisse couverte d'un drap)</li>
+        <li>Proposer des activités <strong>apaisantes</strong> plutôt qu'excitantes : tapis de léchage, Kong fourré, recherche d'odeurs lente</li>
+        <li>Vérifier qu'elle dort bien <strong>18-20h par jour cumulé</strong> (sieste + nuit)</li>
+        <li>Éviter les jeux qui montent en intensité (lancer de balle frénétique, tiraillements à répétition)</li>
+        <li>Si crise installée, isoler 30 min dans un endroit calme pour laisser le système nerveux redescendre</li>
+      </ul>
+    </section>
+
+    <!-- ============ MATERIEL CHECKLIST ============ -->
+    <section class="materiel" id="materiel">
+      <span class="materiel-tag">Kit de démarrage</span>
+      <h2 class="materiel-title">Tout ce qu'il faut avant l'arrivée</h2>
+      <p class="materiel-sub">À cocher au fur et à mesure des achats. Le strict nécessaire est en haut.</p>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Essentiel · à avoir le jour J</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_caisse"><span class="materiel-task-text">Caisse de transport / repos (taille adulte ~50 cm)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_panier"><span class="materiel-task-text">Panier confortable lavable</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_gamelles"><span class="materiel-task-text">Gamelle eau + gamelle nourriture (inox ou céramique)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_croquettes"><span class="materiel-task-text">Sac de croquettes (mêmes que l'éleveur, ou transition prévue)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_harnais"><span class="materiel-task-text">Harnais en H taille chiot (jamais collier étrangleur)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_laisse"><span class="materiel-task-text">Laisse 1m50 en nylon ou cuir souple</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_sac"><span class="materiel-task-text">Sac de portage / sac à dos chien (pré-vaccins complets)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_medaille"><span class="materiel-task-text">Médaille gravée (nom + numéro)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_sacs"><span class="materiel-task-text">Sacs à crottes (gros stock)</span></label>
+      </div>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Pour la solitude & le calme</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_kong"><span class="materiel-task-text">Kong (au moins 2 pour rotation)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_leche"><span class="materiel-task-text">Tapis de léchage (Lickimat ou équivalent)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_snuffle"><span class="materiel-task-text">Snuffle mat (tapis de recherche)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_pate"><span class="materiel-task-text">Pâte à fourrer Kong (beurre de cacahuète sans xylitol, banane, pâté chien)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_drap"><span class="materiel-task-text">Drap léger pour couvrir la caisse (créer un cocon)</span></label>
+      </div>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Soins & hygiène</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_brosse"><span class="materiel-task-text">Brosse adaptée double poil (slicker + carde)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_demeloir"><span class="materiel-task-text">Démêloir métal</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_shampoo"><span class="materiel-task-text">Shampoing doux chiot</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_coupe"><span class="materiel-task-text">Coupe-griffes ou lime électrique</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_serviettes"><span class="materiel-task-text">Serviettes microfibre dédiées (Paris pluvieux)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_lingettes"><span class="materiel-task-text">Lingettes pattes / nettoyantes douces</span></label>
+      </div>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Jouets & mâchage</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_bois"><span class="materiel-task-text">Bois de cerf (résiste aux dents définitives)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_corne"><span class="materiel-task-text">Corne de buffle ou similaire</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_jouets"><span class="materiel-task-text">3-4 jouets variés (peluche, corde, caoutchouc)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_distrib"><span class="materiel-task-text">Jouet distributeur (puzzle alimentaire)</span></label>
+      </div>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Sorties & vie sociale</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_longe"><span class="materiel-task-text">Longe 5m (puis 10m plus tard)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_tapis_pliable"><span class="materiel-task-text">Tapis pliable pour terrasses / restos</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_friandises"><span class="materiel-task-text">Pochette à friandises (récompenses positives)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_friandises_pot"><span class="materiel-task-text">Friandises hautes valeurs (fromage, poulet déshydraté)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_gourde"><span class="materiel-task-text">Gourde voyage avec gamelle intégrée</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_impermeable"><span class="materiel-task-text">Imperméable chien (Paris)</span></label>
+      </div>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Maison & propreté</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_nettoyant"><span class="materiel-task-text">Nettoyant enzymatique (efface l'odeur d'urine, indispensable)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_tapis_proprete"><span class="materiel-task-text">Tapis de propreté (les premiers jours)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_baby_gate"><span class="materiel-task-text">Barrière baby-gate (délimiter une pièce)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_camera"><span class="materiel-task-text">Caméra surveillance (smartphone reconverti ou modèle dédié)</span></label>
+      </div>
+
+      <div class="materiel-cat">
+        <div class="materiel-cat-title">Administratif & santé</div>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_assurance"><span class="materiel-task-text">Devis assurance santé comparés (souscrire avant les pépins)</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_veto"><span class="materiel-task-text">Véto de quartier identifié + numéro garde 24/7</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_carnet"><span class="materiel-task-text">Pochette dédiée pour carnet de santé</span></label>
+        <label class="materiel-task"><input type="checkbox" data-mat="m_ecole"><span class="materiel-task-text">École du chiot pré-réservée dans le 13e</span></label>
+      </div>
+    </section>
+
+    <div class="global-bar">
+      <div class="global-bar-row">
+        <span class="global-bar-label">Avancement total</span>
+        <span class="global-bar-count" id="globalCount">0 / 0</span>
+      </div>
+      <div class="global-bar-track">
+        <div class="global-bar-fill" id="globalFill" style="width:0%"></div>
+      </div>
+      <div class="global-bar-stats">
+        <span><strong id="badgeCount">0</strong>BADGES</span>
+        <span><strong id="weekCount">0</strong>SEMAINES BOUCLÉES</span>
+        <span><strong id="matCount">0</strong>MATÉRIEL ACQUIS</span>
+      </div>
+    </div>
+
+    <nav class="jump-nav" id="jumpNav"></nav>
+
+    <!-- ============ JOURNAL DE BORD LIBRE ============ -->
+    <section class="logbook" id="logbook">
+      <div class="logbook-header">
+        <div>
+          <h2 class="logbook-title">Journal de bord</h2>
+          <div class="logbook-meta">Tout ce qu'on veut noter, au fil des jours</div>
+        </div>
+        <div class="logbook-icon">📖</div>
+      </div>
+      <p class="logbook-intro">
+        Pour tout ce qui ne rentre pas dans les cases : anecdotes, sorties, repas, sommeil, comportement, pipi, caca. Tape ce que tu veux ou utilise les raccourcis. Tout est sauvegardé et synchronisé entre nos deux téléphones.
+      </p>
+
+      <div class="composer">
+        <textarea id="composerText" class="composer-textarea" placeholder="Note du jour… (qu'a fait Bookie ? comment elle va ? on a vu quoi ? on note quoi ?)"></textarea>
+        <div class="composer-quick">
+          <button class="quick-btn" data-quick="pee"><span class="qb-emoji">💧</span> Pipi</button>
+          <button class="quick-btn" data-quick="poop"><span class="qb-emoji">💩</span> Caca</button>
+          <button class="quick-btn" data-quick="eat"><span class="qb-emoji">🥣</span> Repas</button>
+          <button class="quick-btn" data-quick="walk"><span class="qb-emoji">🚶</span> Sortie</button>
+          <button class="quick-btn" data-quick="sleep"><span class="qb-emoji">🌙</span> Sieste</button>
+        </div>
+        <div class="composer-actions">
+          <div class="composer-author">
+            <span class="composer-info">Par :</span>
+            <button class="author-pill active" data-author="Clément">Clément</button>
+            <button class="author-pill" data-author="Gabrielle">Gabrielle</button>
+          </div>
+          <button id="composerSubmit" class="composer-submit">Enregistrer ↵</button>
+        </div>
+      </div>
+
+      <div class="logbook-entries" id="logbookEntries">
+        <div class="logbook-empty">Aucune entrée pour l'instant. Tape ta première note au-dessus 🐾</div>
+      </div>
+    </section>
+
+    <div id="phases"></div>
+
+    <section class="redflags">
+      <h2 class="redflags-title">Quand consulter</h2>
+      <div class="redflags-sub">À surveiller · véto ou éducateur·rice</div>
+      <ul>
+        <li>Anxiété de séparation marquée, destructions, vocalises continues, salive ++</li>
+        <li>Aboiements répétés impossibles à interrompre</li>
+        <li>Réactivité chiens/humains qui empire au lieu de s'améliorer</li>
+        <li>"Herding" sur enfants, joggeurs, vélos qui pince réellement</li>
+        <li>Refus alimentaire plus de 24h, vomissements/diarrhée répétés</li>
+        <li>Grognements ou raideur près de sa gamelle/panier</li>
+        <li>Boiterie persistante, léthargie inhabituelle</li>
+        <li>Signes de surstimulation chronique qui ne se résorbent pas avec du repos</li>
+      </ul>
+    </section>
+
+    <div class="footer">
+      <div class="footer-mark">🐾</div>
+      <div class="footer-text">Tenu par Gabrielle &amp; Clément · Édité par Bookie</div>
+      <button class="reset-btn" id="resetBtn">↻ Réinitialiser le carnet</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  health: '🩺', solo: '🏠', learn: '🎓', social: '🫂',
+  life: '✨', walk: '🚶', game: '🎲', care: '🛁',
+  mind: '🧠', place: '📍', food: '🥣', sleep: '🌙',
+  cafe: '☕', train: '🚆', shop: '🛍️', run: '🏃',
+  hike: '🥾', bar: '🍷', feel: '👐', sound: '🔊',
+  event: '🎆',
+};
+
+const PHASES = [
+  {
+    id: 'p1', num: '01',
+    title: "L'Arrivée",
+    age: '8 → 12 semaines · 2 → 3 mois',
+    narrative: `<p>Bookie débarque chez nous. Elle a 8 semaines, elle est minuscule, elle n'a quasi rien vu du monde. Les trois premières semaines vont être <strong>les plus intenses émotionnellement</strong> : on va passer de "j'ai un chiot adorable" à "putain c'est épuisant" à "ah, en fait on apprend à se connaître". Tout est nouveau pour elle, tout est nouveau pour nous. Les premières nuits seront peut-être courtes. Elle va faire pipi partout pendant deux semaines. Elle va mordiller nos mains. Tout est normal.</p>
+<p>Ce qui se joue maintenant et qui ne se rejouera pas : <strong>la fenêtre de socialisation se ferme à 14-16 semaines</strong>. Tout ce que Bookie n'a pas vu, touché, entendu d'ici là sera plus difficile à accepter plus tard. C'est pour ça que cette phase est si chargée en "premières fois" : surfaces, bruits, humains, situations. On la porte partout dans son sac, même avant ses vaccins complets, parce que ses pattes au sol attendront mais ses yeux et ses oreilles non.</p>
+<p>L'autre chantier majeur : <strong>lui apprendre la solitude</strong>. Pas en bloc, par micro-doses, dès le premier jour. Quitter la pièce 30 secondes. Revenir sans drame. Recommencer. Un BAM mal préparé à la solitude devient un BAM anxieux pour la vie. Et attention au piège n°1 de la race : la surstimulation. Si elle est agitée, c'est souvent qu'elle manque de sommeil, pas d'activité.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> on l'inclut dans tout, on la porte partout (sac), on multiplie les expériences positives. Repas à heures fixes, sorties pipi toutes les 1-2h, sieste obligatoire après chaque jeu. Un chiot dort 18-20h/jour, ne pas le laisser s'épuiser sous prétexte qu'il "a encore envie de jouer".</p>
+<p><strong>À travailler en continu :</strong> son prénom, manipulation douce (pattes, oreilles, gueule), récompense quand elle est calme, redirection des mordillements vers un jouet jamais sur les mains, brossage quotidien plaisir.</p>
+<p><strong>À NE PAS faire :</strong> punir un pipi à l'intérieur (juste nettoyer en silence avec du nettoyant enzymatique), forcer une rencontre qui la stresse, la laisser monter sur le canapé si on veut interdire ça plus tard, sauter d'une hauteur, courir avec elle, l'épuiser physiquement.</p>`,
+    weeks: [
+      {
+        id: 'w1', tag: 'SEM 1',
+        title: 'Jour 1 → 7 · Atterrissage',
+        blocks: [
+          { type: 'health', title: 'Santé & administratif', items: [
+            "Bookie a fait sa première visite véto (dans les 48h après arrivée)",
+            "Le véto a confirmé qu'elle est en bonne santé",
+            "Vermifuge à jour vérifié avec l'éleveur·euse",
+            "Numéros véto + véto de garde 24/7 enregistrés dans nos tels",
+            "La puce d'identification est transférée au nom de Clément",
+            "Le carnet de santé est rangé à un endroit fixe",
+          ]},
+          { type: 'sleep', title: 'Sommeil & espace', items: [
+            "Coin couchage installé (caisse ou panier)",
+            "Le couchage est près de nous la première semaine",
+            "Bookie a passé sa première nuit chez nous",
+            "On a tenu sans la prendre dans le lit (si c'est notre règle)",
+            "Elle dort vraiment 18-20h/jour (siestes incluses)",
+            "Elle a fait au moins une nuit complète sans pleurer",
+          ]},
+          { type: 'food', title: 'Repas', items: [
+            "3 repas par jour à heures fixes mis en place",
+            "Croquettes de l'éleveur·euse utilisées (ou transition entamée sur 7-10j)",
+            "Gamelle d'eau toujours pleine et accessible",
+            "Elle mange sereinement sans qu'on la dérange",
+          ]},
+          { type: 'learn', title: 'Tout premiers apprentissages', items: [
+            "Bookie répond à son prénom (regarde quand on l'appelle)",
+            "Premier \"Assis\" tenté avec une friandise",
+            "3 séances très courtes (1-2 min) de manipulation : pattes, oreilles, museau",
+            "Bookie n'a pas mordu une seule main aujourd'hui (redirigée vers jouet)",
+          ]},
+          { type: 'solo', title: 'Solitude — niveau zéro', items: [
+            "On quitte la pièce 30 secondes, elle reste seule",
+            "On revient sans rituel ni câlin exalté",
+            "Premier Kong / jouet à mâcher introduit",
+            "Elle a accepté d'être dans une pièce sans nous, porte ouverte",
+          ]},
+          { type: 'feel', title: 'Premières surfaces', items: [
+            "Bookie a marché sur du parquet",
+            "Bookie a marché sur du carrelage",
+            "Bookie a marché sur un tapis",
+            "Bookie a marché sur un paillasson",
+          ]},
+        ]
+      },
+      {
+        id: 'w2', tag: 'SEM 2',
+        title: 'Sem. 2 · Premiers repères',
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "2ème injection de vaccin (CHPPi-L) effectuée",
+            "Première séance véto vécue sans qu'elle panique",
+            "Première pesée à la maison faite",
+            "Brossage quotidien démarré (séance plaisir 2-3 min)",
+          ]},
+          { type: 'care', title: 'Soins & manipulations', items: [
+            "Bookie laisse toucher ses pattes sans bouger",
+            "Bookie laisse toucher ses oreilles",
+            "Bookie laisse toucher sa gueule",
+            "Bookie laisse toucher son ventre",
+            "Premier rinçage / douchette doux toléré",
+            "Première manipulation des griffes (sans couper, juste toucher)",
+          ]},
+          { type: 'solo', title: 'Solitude', items: [
+            "Absence de 5 minutes réussie sans pleurs",
+            "Absence de 10 minutes réussie",
+            "Absence de 15 minutes réussie",
+            "Elle reste seule dans une pièce porte fermée pendant 5 min",
+          ]},
+          { type: 'sound', title: 'Bruits de la maison', items: [
+            "A entendu l'aspirateur sans paniquer",
+            "A entendu le sèche-cheveux",
+            "A entendu le lave-vaisselle / lave-linge",
+            "A entendu la sonnette",
+            "A entendu un mixeur / blender",
+            "A entendu le micro-ondes",
+            "A entendu une chasse d'eau",
+          ]},
+          { type: 'feel', title: 'Nouvelles surfaces', items: [
+            "A marché sur du lino",
+            "A marché sur un paillasson en fibres rêches",
+            "A grimpé une marche basse",
+          ]},
+          { type: 'life', title: 'Propreté de nuit', items: [
+            "On a mis en place une sortie pipi en milieu de nuit si elle pleure",
+            "On a noté nos premières heures de sortie pour anticiper son rythme",
+            "Réveil matin = sortie pipi immédiate",
+          ]},
+        ]
+      },
+      {
+        id: 'w3', tag: 'SEM 3',
+        title: 'Sem. 3 · Le monde commence (en sac)',
+        blocks: [
+          { type: 'social', title: 'Premières sorties portage', items: [
+            "Premier trottoir dans le sac de portage",
+            "Première place / parc observé depuis le sac (5-10 min)",
+            "Une place de marché traversée",
+            "Une terrasse de café observée depuis le sac",
+          ]},
+          { type: 'sound', title: 'Bruits de la ville', items: [
+            "A entendu un klaxon de voiture",
+            "A entendu un scooter qui passe",
+            "A entendu un camion qui passe",
+            "A entendu une moto bruyante",
+            "A entendu une sirène (pompier, police, ambulance)",
+            "A entendu un autobus qui démarre",
+            "A entendu des sons de chantier (perceuse, marteau)",
+          ]},
+          { type: 'solo', title: 'Solitude', items: [
+            "Absence de 30 minutes réussie",
+            "La caisse est devenue une zone refuge (elle y va d'elle-même)",
+            "Elle ne pleure plus quand on s'éloigne dans la maison",
+          ]},
+          { type: 'learn', title: 'Apprentissages', items: [
+            "\"Assis\" fiable en intérieur sur ordre",
+            "Première marche en laisse dans le couloir (laisse molle)",
+            "\"Bookie viens\" en intérieur fonctionne 9 fois sur 10",
+            "Elle attend un peu avant de manger",
+          ]},
+          { type: 'life', title: 'Vie de couple', items: [
+            "Une soirée en rotation (l'un·e gère Bookie, l'autre cuisine, puis on inverse)",
+            "Elle a appris à se poser quand on mange (tapis dédié à proximité)",
+            "On a réussi à regarder un film à deux pendant qu'elle dormait",
+          ]},
+        ]
+      },
+      {
+        id: 'w4', tag: 'SEM 4',
+        title: 'Sem. 4 · Bilan phase 1',
+        blocks: [
+          { type: 'social', title: 'Humains rencontrés (objectif : variété)', items: [
+            "A rencontré un homme barbu",
+            "A rencontré un homme à la voix grave",
+            "A rencontré une femme aux cheveux longs",
+            "A rencontré une personne âgée",
+            "A rencontré un enfant (6-12 ans)",
+            "A vu de loin un bébé / tout petit",
+            "A rencontré une personne portant un chapeau",
+            "A rencontré une personne portant des lunettes",
+            "A rencontré quelqu'un en uniforme (livreur, postier·ère)",
+          ]},
+          { type: 'social', title: 'Chiens rencontrés', items: [
+            "1er chien adulte équilibré rencontré (vacciné, calme)",
+            "2ème chien rencontré",
+            "3ème chien rencontré",
+            "Un chien plus grand qu'elle rencontré",
+            "Un chien de taille similaire rencontré",
+          ]},
+          { type: 'solo', title: 'Solitude', items: [
+            "Absence de 1h réussie",
+            "Absence de 1h30 réussie une fois (sans drame)",
+            "Aucune destruction pendant nos absences sur les 7 derniers jours",
+          ]},
+          { type: 'learn', title: 'Apprentissages', items: [
+            "\"Couché\" introduit (lure avec friandise)",
+            "Mordillements 100% redirigés vers jouet, plus aucun sur les mains",
+            "Elle mange sans gronder même si on approche la main de la gamelle",
+            "Elle accepte qu'on lui retire un objet (échange contre friandise)",
+          ]},
+          { type: 'place', title: 'Premiers lieux validés', items: [
+            "Le hall + ascenseur de l'immeuble (descente seule maîtrisée)",
+            "Une cour intérieure / jardin privé",
+            "La salle d'attente du véto (visite \"plaisir\" sans soin)",
+            "Le Jardin des Plantes (en sac)",
+            "Un trajet en voiture / Uber court réussi sans stress",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_arrivee', icon: '🏡', name: 'Bienvenue', desc: 'Premier jour à la maison' },
+      { id: 'b_prenom', icon: '🔔', name: 'Premier déclic', desc: 'Répond à son prénom' },
+      { id: 'b_premiere_nuit', icon: '🌙', name: 'Première nuit', desc: 'Nuit sereine bouclée' },
+      { id: 'b_solo_1h', icon: '⏱️', name: 'Solo 1h', desc: '1h seule sans drame' },
+      { id: 'b_10_humains', icon: '🫂', name: "Carnet d'adresses", desc: '10+ humains rencontrés' },
+      { id: 'b_veto_zen', icon: '🩺', name: 'Véto zen', desc: 'Séance sans paniquer' },
+      { id: 'b_silence_radio', icon: '🔇', name: 'Silence radio', desc: 'Zéro destruction 7 jours' },
+    ]
+  },
+
+  {
+    id: 'p2', num: '02',
+    title: 'Première ouverture',
+    age: '12 → 16 semaines · 3 → 4 mois',
+    narrative: `<p>Vaccins complets, pattes au sol pour de vrai. Le monde devient praticable. C'est la phase la plus excitante : Bookie découvre tout, et chaque sortie est une mini-aventure. On voit son caractère s'affirmer, son intelligence se déployer. Elle commence à anticiper nos gestes, à apprendre vite, à nous regarder pour comprendre ce qu'on attend d'elle.</p>
+<p>C'est aussi la <strong>dernière ligne droite avant la fermeture de la fenêtre de socialisation</strong>. Tout ce qui se joue maintenant compte triple. On accélère sur les transports (premier métro, premier bus), les terrasses, les lieux bondés. On commence à intégrer Bookie à notre vie sociale : premier vrai café à deux avec elle, premier brunch dominical, première terrasse en soirée. C'est aussi le moment de <strong>l'inscrire à l'école du chiot</strong>, qui est très fortement recommandée pour un BAM (socialisation chien-chien encadrée et rappel en environnement stimulant).</p>
+<p>Côté émotionnel : la propreté devrait être quasi acquise en journée. Si elle pleure encore la nuit, c'est qu'il faut sortir une fois en milieu de nuit. Patience encore quelques semaines, on y est presque.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> sorties libres pattes au sol, balades courtes mais variées (10-20 min max, 2 fois par jour). École du chiot une fois par semaine. Multiplication des expériences urbaines.</p>
+<p><strong>À travailler en continu :</strong> marche en laisse molle, rappel en intérieur puis extérieur calme, "couché", "pas bouger" très court, gestion calme des terrasses (tapis sous la table).</p>
+<p><strong>À NE PAS faire :</strong> longues balades qui épuisent (croissance), sauts répétés, escaliers en boucle, forcer les rencontres dans des parcs canins anarchiques (préférer rencontres choisies).</p>`,
+    weeks: [
+      {
+        id: 'w5', tag: 'SEM 5',
+        title: 'Sem. 5 · Pattes au sol',
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "Rappel vaccin effectué (sorties libres OK)",
+            "Anti-parasitaire externe en place (collier ou pipette)",
+            "On a vérifié son poids et sa courbe de croissance",
+            "Première séance de coupe de griffes acceptée sans drame",
+          ]},
+          { type: 'walk', title: 'Marche extérieure', items: [
+            "Première vraie balade pattes au sol (10-15 min)",
+            "Marche sans tirer sur 20m",
+            "Marche sans tirer sur 50m",
+            "Harnais en H bien ajusté",
+            "Première balade dans un parc public",
+          ]},
+          { type: 'feel', title: 'Nouvelles surfaces', items: [
+            "A marché sur de l'herbe",
+            "A marché sur de la terre",
+            "A marché sur du gravier",
+            "A marché sur du sable",
+            "A marché sur une grille métallique (type Paris)",
+            "A marché sur des pavés",
+            "A marché sur du bitume mouillé",
+          ]},
+          { type: 'learn', title: 'Propreté', items: [
+            "Plus aucun accident en journée sur 7 jours",
+            "Elle a un signal clair pour demander à sortir",
+            "Elle se retient 4h+ sans souci",
+          ]},
+        ]
+      },
+      {
+        id: 'w6', tag: 'SEM 6',
+        title: 'Sem. 6 · École & terrasses',
+        blocks: [
+          { type: 'learn', title: 'École du chiot', items: [
+            "Inscription école du chiot validée",
+            "Premier cours collectif suivi",
+            "Deuxième cours suivi",
+            "Elle joue avec d'autres chiots après le cours",
+          ]},
+          { type: 'cafe', title: 'Vie sociale du couple', items: [
+            "Première vraie terrasse café à deux avec Bookie (30 min)",
+            "Elle est restée couchée sous la table",
+            "Deuxième terrasse, dans un lieu plus animé",
+            "Tapis pliable de transport adopté pour la poser au sol partout",
+          ]},
+          { type: 'solo', title: 'Solitude', items: [
+            "Absence de 2h réussie régulièrement",
+            "Un·e dog-sitter / pet-sitter du 13e identifié·e",
+            "Première garde test (1h) avec le/la dog-sitter validée",
+          ]},
+          { type: 'sound', title: 'Nouveaux bruits', items: [
+            "A entendu de la musique forte (concert lointain, fête)",
+            "A entendu des feux d'artifice (de loin)",
+            "A entendu des cloches d'église",
+            "A entendu un orage / pluie battante",
+          ]},
+        ]
+      },
+      {
+        id: 'w7', tag: 'SEM 7',
+        title: 'Sem. 7 · Transports & monde',
+        blocks: [
+          { type: 'train', title: 'Premiers transports en commun', items: [
+            "Premier trajet en bus (court, en sac)",
+            "Premier trajet en métro (court)",
+            "Tunnel Austerlitz / quai de gare observé",
+            "Premier trajet en voiture (Uber/taxi) sans stress",
+            "Elle reste calme dans le sac pendant un trajet de 15+ min",
+          ]},
+          { type: 'social', title: 'Choses en mouvement croisées', items: [
+            "A croisé un vélo qui passe vite",
+            "A croisé une trottinette électrique",
+            "A croisé un skateboard",
+            "A croisé une poussette",
+            "A croisé un fauteuil roulant",
+            "A croisé un coureur·euse",
+            "A croisé une personne avec une canne",
+          ]},
+          { type: 'social', title: 'Si possible (sortie campagne)', items: [
+            "A vu un cheval de loin",
+            "A vu une vache / mouton de loin",
+            "A vu un canard / pigeon de très près",
+            "A vu un chat (sans pouvoir le chasser)",
+          ]},
+          { type: 'walk', title: 'Marche', items: [
+            "Croise un autre chien sans tirer comme une dingue",
+            "Première balade de 30 min en parc",
+            "A marché sur les berges de Seine",
+          ]},
+        ]
+      },
+      {
+        id: 'w8', tag: 'SEM 8',
+        title: 'Sem. 8 · Bilan phase 2',
+        blocks: [
+          { type: 'learn', title: 'Apprentissages validés', items: [
+            "\"Pas bouger\" 10 sec validé",
+            "Rappel intérieur à 100%",
+            "Rappel extérieur calme à 80%",
+            "\"Tu laisses\" sur friandise au sol fonctionne",
+            "\"Couché\" fiable",
+          ]},
+          { type: 'place', title: 'Lieux validés', items: [
+            "Berges de Seine côté Austerlitz",
+            "Bois de Vincennes (1ère balade nature)",
+            "Un café / restau pet-friendly du 13e",
+            "Une boutique animalerie",
+            "Une rue piétonne très passante",
+          ]},
+          { type: 'life', title: 'Vie de couple — premiers vrais moments à 3', items: [
+            "Premier déjeuner au resto à 3 (terrasse, lieu calme)",
+            "Première soirée chez des ami·e·s avec Bookie",
+            "On a réussi à se concentrer / lire / regarder un film 1h avec elle endormie",
+          ]},
+          { type: 'sound', title: 'Bilan bruits maîtrisés', items: [
+            "Au moins 15 types de bruits différents validés sans flipper",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_ecolier', icon: '🎒', name: 'Écolière', desc: 'École du chiot lancée' },
+      { id: 'b_terrasse', icon: '☕', name: 'Café crème', desc: 'Calme en terrasse' },
+      { id: 'b_metro', icon: '🚇', name: 'Métro OK', desc: 'Premier trajet validé' },
+      { id: 'b_bus', icon: '🚌', name: 'Bus OK', desc: 'Premier bus validé' },
+      { id: 'b_nuit_full', icon: '😴', name: 'Nuit complète', desc: 'Plus de pipi nocturne' },
+      { id: 'b_premier_resto', icon: '🍽️', name: 'Premier resto', desc: 'A déjeuné avec nous' },
+      { id: 'b_solo_2h', icon: '⏰', name: 'Solo 2h', desc: '2h seule au calme' },
+      { id: 'b_griffes', icon: '✂️', name: 'Griffes OK', desc: 'Coupe sans drame' },
+    ]
+  },
+
+  {
+    id: 'p3', num: '03',
+    title: 'Consolidation',
+    age: '4 → 5 mois',
+    narrative: `<p>La phase la plus calme et la plus rassurante. Bookie a passé le cap de la fenêtre de socialisation, les fondations sont posées, on récolte. Elle commence à <strong>vraiment s'intégrer à notre rythme</strong>. On voit apparaître les premiers moments où elle s'auto-régule : elle s'ennuie dans son coin, elle sait attendre, elle nous laisse travailler.</p>
+<p>C'est aussi le moment où elle perd ses dents de lait, elle va vouloir mâcher absolument tout. Bois de cerf, corne de buffle, jouets à mâcher en libre accès, sinon ce sera nos chaussures ou les pieds de la table. La <strong>croissance est encore très active</strong>, donc on retient nos envies de l'emmener courir avec nous. Patience, ça arrive bientôt.</p>
+<p>Côté solitude, on franchit un cap : on vise les 3-4h tranquilles, sans destruction, sans vocalises. C'est là qu'on saura si on a bien fait le travail des deux premiers mois. La caméra de surveillance temporaire est un super outil pour vérifier ce qui se passe vraiment quand on n'est pas là.</p>
+<p>C'est le moment où le shopping en boutique devient possible : elle est posée, elle suit, elle ne stresse plus sur les sols glissants ni les miroirs. Premier vrai shopping à 3.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> consolidation des acquis, introduction de la stimulation mentale quotidienne (snuffle mat, jeux de pistage, distributeurs), routines de sortie variées, premières sorties soirée et premier shopping calme.</p>
+<p><strong>À travailler en continu :</strong> rappel en environnement stimulant (longe 5-10m), marche au pied progressive, "reste" à distance croissante, "tu laisses", auto-régulation (savoir s'ennuyer).</p>
+<p><strong>À NE PAS faire :</strong> course à pied avec elle (croissance), sauts répétés (frisbee, lancers haut), longues escalades d'escaliers, parc canin sauvage non encadré.</p>`,
+    weeks: [
+      {
+        id: 'w9', tag: 'SEM 9-10',
+        title: 'Sem. 9-10 · Routine bien rodée',
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "Discussion stérilisation/castration entamée avec véto",
+            "Dents définitives qui poussent identifiées",
+            "Bois de cerf / corne de buffle en libre accès",
+            "Tapis de léchage adopté pour les moments calmes",
+            "Aucune douleur ou gêne visible",
+          ]},
+          { type: 'solo', title: 'Solitude — étape clé', items: [
+            "Absence de 3h sans destruction",
+            "Absence de 4h sans destruction",
+            "Caméra installée et utilisée pour vérifier son comportement",
+            "Aucun pleur audible pendant nos absences",
+            "Elle dort la plupart du temps quand on n'est pas là",
+            "Départs et retours parfaitement neutres ancrés",
+          ]},
+          { type: 'learn', title: 'Apprentissages avancés', items: [
+            "Rappel extérieur stimulant à 70%+",
+            "Marche au pied 5 min sans tirer",
+            "\"Reste\" à 1m réussi",
+            "\"Reste\" à 2m réussi",
+            "\"Reste\" à 5m réussi",
+          ]},
+        ]
+      },
+      {
+        id: 'w10', tag: 'SEM 11-12',
+        title: 'Sem. 11-12 · Vie commune fluide',
+        blocks: [
+          { type: 'mind', title: 'Stimulation mentale', items: [
+            "Snuffle mat utilisé régulièrement",
+            "Jeu de pistage simple intérieur (cherche la friandise)",
+            "Kong fourré congelé maîtrisé",
+            "Distributeur / puzzle alimentaire introduit",
+            "Elle sait s'ennuyer calmement sans réclamer",
+            "Elle a son tapis pour \"aller à sa place\" sur ordre",
+          ]},
+          { type: 'walk', title: 'Sport & dépense (mesuré)', items: [
+            "Marche de 25 min × 2 par jour intégrée à la routine",
+            "On a respecté la règle pas de course, pas de saut répété",
+            "Une grande balade découverte (1h en forêt, allure tranquille)",
+          ]},
+          { type: 'social', title: 'Social', items: [
+            "Rencontres chiens 2-3x/sem maintenues",
+            "École du chiot suivie sans rater",
+            "Elle joue calmement avec d'autres chiots",
+            "Elle accepte qu'un chien adulte la recadre sans drame",
+          ]},
+          { type: 'bar', title: 'Vie de couple — soirées & shopping', items: [
+            "Premier bar en début de soirée (lumière douce, calme)",
+            "Elle est restée couchée sous le tabouret 1h",
+            "Premier brunch dominical à 3",
+            "Premier shopping ensemble avec elle (Bercy Village ou équivalent)",
+            "Soirée chez des ami·e·s plus animée validée",
+          ]},
+          { type: 'place', title: 'Lieux validés', items: [
+            "Parc Montsouris",
+            "Forêt de Meudon ou Saint-Cloud (longe 5m)",
+            "Un magasin de vêtements (lumière, miroirs, monde)",
+            "Un Monoprix / supermarché en bordure de tapis",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_solo_4h', icon: '🕓', name: 'Solo 4h', desc: '4h seule sans souci' },
+      { id: 'b_rappel_bronze', icon: '🥉', name: 'Rappel bronze', desc: '70% en extérieur' },
+      { id: 'b_zen', icon: '🧘', name: 'Zen Master', desc: "S'ennuie calmement" },
+      { id: 'b_bar', icon: '🍷', name: 'Premier bar', desc: 'Apéro à 3 validé' },
+      { id: 'b_brunch', icon: '🥐', name: 'Brunch crew', desc: 'Dimanche en famille' },
+      { id: 'b_premier_shopping', icon: '🛍️', name: 'Compagne shopping', desc: 'A fait les magasins' },
+      { id: 'b_snuffle', icon: '🧩', name: 'Cerveau actif', desc: 'Jeux de réflexion adoptés' },
+    ]
+  },
+
+  {
+    id: 'p4', num: '04',
+    title: 'Pré-adolescence',
+    age: '5 → 6 mois',
+    narrative: `<p>Premières secousses. Bookie n'est plus tout à fait un chiot, pas encore une chienne adulte. <strong>Elle commence à tester les limites</strong>. Le rappel se dégrade, c'est normal et universel, c'est la testostérone (ou les œstrogènes) qui montent. Elle peut "oublier" sa propreté quelques jours. Elle peut faire la sourde oreille. Elle peut se montrer plus sélective avec ses copains chiens.</p>
+<p>Ne pas paniquer, ne pas s'énerver. <strong>Tout le travail accumulé est là, il est juste un peu masqué par les hormones</strong>. On retravaille les bases dans le calme, on remet la longe si nécessaire, on continue de récompenser. On profite de cette phase pour solidifier le rappel d'urgence : un mot ou son dédié qu'on n'utilisera jamais pour rentrer à la maison, juste pour les vraies urgences.</p>
+<p>C'est aussi le moment où on franchit un nouveau cap de transports : <strong>premier train</strong> (TER ou Intercités court). Premier vrai resto le soir, premières sorties plus tardives. Bookie devient officiellement notre compagne de toutes les aventures urbaines.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> on consolide tout en gérant les premiers tests d'opposition. Décision sur la stérilisation/castration avec le véto. Premier toilettage pro pour habituer au salon.</p>
+<p><strong>À travailler en continu :</strong> rappel d'urgence dédié, marche au pied en ville bruyante, "silence" sur ordre (anti-aboiements), gestion herding sur vélos/joggers.</p>
+<p><strong>À NE PAS faire :</strong> céder aux tests (rester ferme et positif), monter en intensité émotionnelle, hurler, lever la main. Si on craque, on s'éloigne 1 min et on revient calme.</p>`,
+    weeks: [
+      {
+        id: 'w13', tag: 'SEM 13-14',
+        title: 'Sem. 13-14 · Les premiers tests',
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "Décision stérilisation prise (date posée ou choix de ne pas faire)",
+            "Bilan dentaire : toutes définitives en place",
+            "Croissance ~85% atteinte (poids stabilisé)",
+            "Premier toilettage pro réservé",
+            "Brossage hebdo plus intensif (sous-poil dense)",
+          ]},
+          { type: 'learn', title: 'Apprentissages avancés', items: [
+            "Rappel d'urgence (mot dédié + jackpot) introduit",
+            "Rappel d'urgence répété 1×/jour pendant 2 semaines",
+            "Marche en laisse impeccable en environnement calme",
+            "\"Au panier\" à distance fonctionne",
+            "Attend devant sa gamelle sur ordre",
+            "Attend devant la porte avant de sortir",
+          ]},
+          { type: 'mind', title: 'Comportement', items: [
+            "\"Silence\" sur ordre maîtrisé",
+            "Plus de pinçage de mollets sur les humains",
+            "Plus de course derrière les vélos / joggers",
+            "Elle réagit calmement à ce qui l'excitait il y a 2 mois",
+          ]},
+        ]
+      },
+      {
+        id: 'w14', tag: 'SEM 15-16',
+        title: 'Sem. 15-16 · Premiers vrais voyages',
+        blocks: [
+          { type: 'train', title: 'Transports longue distance', items: [
+            "Premier trajet TER (court, 30-45 min)",
+            "Premier trajet Intercités",
+            "Elle reste calme aux pieds dans le train",
+            "Métro / bus toutes lignes : OK",
+            "Premier RER",
+          ]},
+          { type: 'solo', title: 'Solitude', items: [
+            "4h seule réussie",
+            "5h seule réussie ponctuellement",
+            "Demi-journée testée avec dog-sitter à mi-parcours",
+          ]},
+          { type: 'life', title: 'Vie de couple — niveau soirée', items: [
+            "Premier resto en soirée (vraie sortie à 3, 2h+)",
+            "Elle est restée calme tout le long",
+            "Une course rapide à 2 sans elle (4h max), elle gère",
+            "Cinéma à 2 sans elle (3h), elle gère",
+          ]},
+          { type: 'event', title: 'Premiers événements urbains', items: [
+            "A vécu un orage à 3 sans paniquer",
+            "A traversé une rue avec klaxons / chantier",
+            "A vu un grand rassemblement (manif, fanfare, sortie de stade)",
+          ]},
+          { type: 'place', title: 'Lieux validés', items: [
+            "Une grande librairie / Fnac (sols qui glissent)",
+            "Un parc canin observé en heure de pointe",
+            "Une gare un samedi matin (bruit + monde)",
+            "Un marché alimentaire bondé",
+            "Un musée ou expo extérieur·e pet-friendly",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_train', icon: '🚆', name: 'Premier train', desc: 'TER validé' },
+      { id: 'b_rappel_argent', icon: '🥈', name: 'Rappel argent', desc: "Mot d'urgence ancré" },
+      { id: 'b_silence', icon: '🤫', name: 'Voix off', desc: '"Silence" sur ordre' },
+      { id: 'b_pied_pro', icon: '🎯', name: 'Pied pro', desc: 'Marche au pied en ville' },
+      { id: 'b_resto_soir', icon: '🌃', name: 'Soirée à 3', desc: 'Resto en soirée OK' },
+      { id: 'b_demi_jour', icon: '☀️', name: 'Demi-journée light', desc: '5h sereines' },
+      { id: 'b_orage', icon: '⛈️', name: 'Anti-orage', desc: 'A traversé un orage zen' },
+    ]
+  },
+
+  {
+    id: 'p5a', num: '05',
+    title: 'Adolescence · début',
+    age: '6 → 7 mois',
+    narrative: `<p>Bienvenue dans la période la plus pénible. Et la plus formatrice. <strong>L'adolescence canine est une vraie traversée du désert</strong> : Bookie va sembler avoir tout oublié. Elle va nous regarder droit dans les yeux et décider de ne pas obéir. Elle va peut-être tirer en laisse alors qu'elle marchait au pied. Elle va aboyer pour rien.</p>
+<p>C'est le moment de <strong>respirer profondément et de faire confiance au travail accumulé</strong>. Rien n'est perdu, c'est juste enfoui sous une montagne d'hormones. On reprend les bases en positif, on remet la longe, on simplifie les exigences pendant quelques semaines, puis on remonte progressivement. Surtout : on ne s'énerve jamais. Une seule explosion de colère peut casser des mois de confiance.</p>
+<p>Stérilisation ou pas stérilisation, c'est aussi le moment de finaliser le choix avec le véto. Premières chaleurs possibles si on ne stérilise pas, parfois dès 6 mois.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> patience et constance. On retravaille tout en positif comme à 4 mois si besoin. Premier toilettage pro. Premières chaleurs possibles si non stérilisée.</p>
+<p><strong>À travailler en continu :</strong> rappel (encore et toujours), constance des règles, gestion des frustrations (siennes et les nôtres), socialisation continue, sommeil quantitatif (toujours 16-18h/jour à cet âge).</p>
+<p><strong>À NE PAS faire :</strong> abandonner, hurler, recourir à la coercition. Si on se sent dépassé·e, on contacte un·e éducateur·rice positif·ve, pas un·e "dresseur·euse" old-school. Pas encore de course à pied avec nous (croissance des articulations).</p>`,
+    weeks: [
+      {
+        id: 'w17', tag: 'M6',
+        title: "Mois 6 · La crise d'opposition",
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "Stérilisation / castration effectuée (si décidée pour cet âge)",
+            "Premières chaleurs si non stérilisée — calendrier noté",
+            "Premier toilettage pro réussi (habituation au salon)",
+            "Pesée + bilan croissance avec véto",
+          ]},
+          { type: 'mind', title: "Gestion de l'ado", items: [
+            "Crise d'opposition gérée sans s'énerver (au moins 1 épisode validé)",
+            "Sélectivité auditive acceptée, on retravaille tout en positif",
+            "Régression éventuelle sur propreté gérée sans panique",
+            "On a contacté un·e éducateur·rice si besoin",
+            "On n'a pas crié sur elle ce mois-ci",
+          ]},
+          { type: 'learn', title: 'Reprise des bases', items: [
+            "Rappel ré-attaqué à fond (longe 10m en forêt)",
+            "\"Tu laisses\" sur objet en mouvement",
+            "\"Reste\" à distance 30 sec",
+            "5+ tours fun appris (donne patte, fait le beau, roule, slalom jambes, recule)",
+          ]},
+        ]
+      },
+      {
+        id: 'w18', tag: 'M7',
+        title: 'Mois 7 · Premières aventures sportives douces',
+        blocks: [
+          { type: 'walk', title: 'Activité physique progressive', items: [
+            "Premières marches plus longues (45 min à 1h, allure tranquille)",
+            "Première rando douce de 1h avec pauses régulières",
+            "On a vérifié avec le véto qu'on peut commencer un peu plus d'intensité",
+            "PAS encore de course à pied avec nous (articulations)",
+            "PAS de vélo où elle trotte rapidement (encore trop tôt)",
+          ]},
+          { type: 'hike', title: 'Randonnée', items: [
+            "Première rando de 1h avec pauses",
+            "Première rando avec un peu de dénivelé doux",
+            "Harnais de rando adopté",
+          ]},
+          { type: 'feel', title: 'Premières eaux (si elle aime)', items: [
+            "A mis les pattes dans un lac / rivière",
+            "A mis les pattes dans la mer",
+            "Elle nage volontairement si l'occasion se présente",
+          ]},
+          { type: 'solo', title: "Solitude — l'objectif", items: [
+            "5-6h seule sans destruction ni vocalises",
+            "Demi-journée OK sans visite intermédiaire",
+            "Caisse plus nécessaire si tout va bien",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_ado_survivor', icon: '🛡️', name: 'Ado survivor', desc: "A traversé l'opposition" },
+      { id: 'b_glow', icon: '✂️', name: 'Glow-up', desc: 'Toilettage pro' },
+      { id: 'b_demi_journee', icon: '☀️', name: 'Demi-journée', desc: '6h sans personne' },
+      { id: 'b_rando', icon: '🥾', name: 'Première rando', desc: '1h+ en nature' },
+      { id: 'b_water', icon: '🌊', name: 'Aquatique', desc: 'A nagé' },
+    ]
+  },
+
+  {
+    id: 'p5b', num: '06',
+    title: 'Adolescence · suite',
+    age: '7 → 9 mois',
+    narrative: `<p>L'adolescence continue, mais les premiers signes de stabilisation apparaissent. Bookie commence à <strong>retrouver une partie de ses acquis</strong>. Le rappel se reconstruit. La sélectivité auditive recule. Et surtout, la <strong>croissance se termine vraiment</strong>, ce qui nous permet de passer à la vraie activité physique partagée : course à pied courte, vélo, rando plus longue.</p>
+<p>C'est aussi le moment des <strong>premières vraies aventures de couple-avec-chienne</strong> : premier week-end hors Paris, premier AirBnB à 3, premier vrai voyage en train longue distance. Bookie passe le test de devenir notre vraie compagne de voyage.</p>
+<p>Sur la solitude, on stabilise les 5-6h en quotidien. Pour le 8h ponctuel, ça reste possible si tout se passe bien, mais en quotidien c'est rude pour un BAM. À évaluer au cas par cas selon comment Bookie réagit.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> on récolte le travail. Premières activités sportives partagées avec validation véto. Premier week-end à 3. Vol garde plus longue.</p>
+<p><strong>À travailler en continu :</strong> rappel (95% en zones calmes, 70-80% en zones stimulantes), endurance progressive, intégration aux sorties prolongées.</p>
+<p><strong>À NE PAS faire :</strong> imposer 8h de solitude en quotidien (la 8h reste exceptionnel pour un BAM), pousser physiquement trop vite, négliger le calme à la maison.</p>`,
+    weeks: [
+      {
+        id: 'w_p5b_1', tag: 'M7-M8',
+        title: 'Mois 7-8 · Athlète enfin libérée',
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "Croissance considérée comme terminée par le véto",
+            "Articulations vérifiées avant intensification du sport",
+            "Toilettage régulier mis en place (toutes les 6-8 semaines)",
+          ]},
+          { type: 'run', title: 'Course à pied (avec validation véto)', items: [
+            "Première sortie running de 10 min, terrain souple",
+            "Première sortie de 15-20 min, sans intensité",
+            "Elle ne tire pas pendant la course",
+            "Elle s'hydrate aux arrêts",
+            "Pas de bitume long ni de chaleur excessive",
+          ]},
+          { type: 'walk', title: 'Vélo / autres', items: [
+            "Première sortie où elle trotte à côté du vélo (route calme, longe)",
+            "Elle ne tire pas vers les autres chiens en mouvement",
+            "Allure adaptée (pas de sprint)",
+          ]},
+          { type: 'hike', title: 'Randonnée plus exigeante', items: [
+            "Première rando de 2h",
+            "Première rando avec dénivelé réel",
+            "Première rando en forêt avec longe 10m",
+          ]},
+        ]
+      },
+      {
+        id: 'w_p5b_2', tag: 'M8-M9',
+        title: 'Mois 8-9 · Le travail paie',
+        blocks: [
+          { type: 'life', title: 'Vie de couple — vacances', items: [
+            "Premier week-end hors Paris à 3 (AirBnB ou famille)",
+            "Premier dîner tardif en restaurant avec elle calme à nos pieds",
+            "Soirée bar prolongée (2-3h) validée",
+            "Une nuit à 2 sans elle (garde testée chez ami·e ou pension)",
+            "Bookie revient sans drame après la séparation",
+          ]},
+          { type: 'place', title: "Lieux d'aventure", items: [
+            "Forêt de Fontainebleau ou Rambouillet",
+            "La plage ou bord de lac (au moins une fois)",
+            "Une fête populaire / brocante",
+            "Un trajet TGV / Intercités long (2h+)",
+            "Une autre ville française visitée à 3",
+          ]},
+          { type: 'solo', title: 'Solitude', items: [
+            "6h seule sans destruction confirmée en routine",
+            "7h seule testée ponctuellement, sans signe de stress",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_runner', icon: '🏃', name: 'Running buddy', desc: '20 min de course' },
+      { id: 'b_velo', icon: '🚴', name: 'Vélo OK', desc: 'Trotte à côté' },
+      { id: 'b_rando2h', icon: '⛰️', name: 'Rando 2h', desc: '2h de marche' },
+      { id: 'b_weekend', icon: '🗺️', name: 'Premier week-end', desc: 'Nuit hors Paris' },
+      { id: 'b_garde', icon: '🛏️', name: 'Garde validée', desc: 'A dormi sans nous' },
+      { id: 'b_tgv', icon: '🚄', name: 'TGV crew', desc: 'Long trajet validé' },
+    ]
+  },
+
+  {
+    id: 'p6', num: '07',
+    title: "Vers l'âge adulte",
+    age: '9 → 12 mois',
+    narrative: `<p>On y est presque. Bookie devient celle qu'elle sera. Les hormones se stabilisent, le caractère adulte émerge. C'est <strong>une chienne presque finie, intelligente, ancrée dans notre vie</strong>. On affine, on solidifie, on récolte le travail des 10 mois précédents.</p>
+<p>Ce qui doit être acquis maintenant : <strong>elle nous suit avec entrain partout</strong>. En train, en voiture, sous la pluie, en plein été, dans la neige. Elle est à l'aise au bar, au resto, en boutique, en gare. Elle reste seule sans drame en quotidien (5-6h tranquilles, jusqu'à 7-8h ponctuellement si bien construit). Elle accepte une garde de 24h+. Elle est notre compagne, pas notre boulet.</p>
+<p>Et même si on n'arrête jamais d'éduquer un BAM (ils apprennent toute leur vie), on peut <strong>commencer à se reposer un peu sur les acquis</strong>. Les sorties spontanées deviennent possibles. Les week-ends imprévus aussi. C'est le début d'une nouvelle vie, ensemble.</p>
+<p>On peut aussi commencer à <strong>spécialiser Bookie</strong> dans une discipline si on veut creuser : agility, cani-cross, obé-rythmée, pistage, troupeau loisir. Un BAM épanoui a une activité qui canalise son intelligence sur le long terme.</p>`,
+    summary: `<p><strong>Le cadre du mois :</strong> stabilisation des acquis, élargissement géographique (mer, montagne, autre ville), test de gardes prolongées, choix éventuel d'une activité canine spécialisée.</p>
+<p><strong>À travailler en continu :</strong> rappel parfait (95%+), marche au pied partout, gestion des sollicitations sociales calmement, auto-régulation totale à la maison.</p>
+<p><strong>À NE PAS faire :</strong> arrêter d'éduquer ("c'est bon elle sait"), oublier la stimulation mentale quotidienne. Sur la solitude longue durée en quotidien (8h+), rester prudent : possible ponctuellement pour un BAM bien construit, mais c'est rude en régime quotidien classique de bureau. Pet-sitter conseillé en complément.</p>`,
+    weeks: [
+      {
+        id: 'w20', tag: 'M9-M10',
+        title: 'Mois 9-10 · Compagne urbaine accomplie',
+        blocks: [
+          { type: 'health', title: 'Santé', items: [
+            "Bilan annuel véto programmé",
+            "Rappels vaccinaux à jour",
+            "Anti-parasitaire annuel en place",
+            "Croissance définitivement terminée",
+          ]},
+          { type: 'solo', title: 'Solitude — niveau adulte', items: [
+            "6h seule en quotidien sans aucun problème",
+            "7h seule ponctuellement sans signe de stress",
+            "8h seule possible exceptionnellement (avec pet-sitter ou promenade au milieu)",
+            "Routine d'absence sans aucun stress visible",
+            "Aucun signe d'anxiété de séparation",
+          ]},
+          { type: 'mind', title: 'Comportement abouti', items: [
+            "Calme à la maison sans qu'on doive le demander",
+            "Vocalises uniquement justifiées",
+            "Réactivité parfaitement gérée en ville",
+            "Sait s'auto-réguler après excitation (revient au calme seule)",
+            "Plus aucune destruction depuis 2+ mois",
+          ]},
+        ]
+      },
+      {
+        id: 'w21', tag: 'M10-M11',
+        title: 'Mois 10-11 · Maîtrise',
+        blocks: [
+          { type: 'learn', title: 'Maîtrise validée', items: [
+            "Rappel à 95%+ en environnement très stimulant",
+            "Marche en laisse parfaite partout (ville, forêt, foule)",
+            "Obéit à un geste seul (sans voix)",
+            "10+ commandes maîtrisées",
+            "Sait répondre à un sifflet de rappel",
+          ]},
+          { type: 'game', title: 'Sport canin (option)', items: [
+            "Un cours d'agility testé",
+            "Un cours de cani-cross testé",
+            "Un cours d'obé-rythmée testé",
+            "On a choisi une discipline à creuser sur le long terme",
+          ]},
+        ]
+      },
+      {
+        id: 'w22', tag: 'M11-M12',
+        title: "Mois 11-12 · L'anniversaire",
+        blocks: [
+          { type: 'place', title: 'Adulte du monde', items: [
+            "A vu la mer",
+            "A vu la montagne",
+            "A vu la campagne profonde",
+            "A connu Paris en 4 saisons",
+            "A vécu un épisode de fortes chaleurs (été)",
+            "A vu de la neige (si possible)",
+            "A voyagé en train longue distance + nuit hors maison",
+          ]},
+          { type: 'event', title: 'Événements ponctuels validés', items: [
+            "A vécu un 14 juillet ou un nouvel an (feux d'artifice de près)",
+            "A vécu un Noël en famille (monde, agitation, cadeaux)",
+            "A vécu un déménagement éventuel sans drame",
+          ]},
+          { type: 'life', title: 'Vie de couple aboutie', items: [
+            "Vraies vacances à 3 (semaine complète)",
+            "Plusieurs gardes prolongées (2-3 jours) validées",
+            "Soirées et week-ends spontanés possibles sans logistique de fou",
+            "Elle est partie en weekend avec ami·e·s / famille sans nous",
+            "On a célébré ses 1 an dignement 🎂",
+          ]},
+        ]
+      },
+    ],
+    badges: [
+      { id: 'b_un_an', icon: '🎂', name: '1 an !', desc: 'Premier anniversaire' },
+      { id: 'b_rappel_or', icon: '🥇', name: 'Rappel or', desc: '95% partout' },
+      { id: 'b_journee_solo', icon: '🌗', name: 'Journée solo', desc: '8h exceptionnelles OK' },
+      { id: 'b_voyage', icon: '🧳', name: 'Voyageuse', desc: 'A dormi ailleurs' },
+      { id: 'b_4saisons', icon: '🍂', name: 'Quatre saisons', desc: 'Toutes traversées' },
+      { id: 'b_mer', icon: '🌊', name: 'Marin·e', desc: 'A vu la mer' },
+      { id: 'b_montagne', icon: '⛰️', name: 'Montagnarde', desc: 'A vu la montagne' },
+      { id: 'b_neige', icon: '❄️', name: 'Snow puppy', desc: 'A vu la neige' },
+      { id: 'b_feu', icon: '🎆', name: 'Anti-pétards', desc: 'A géré les feux' },
+      { id: 'b_discipline', icon: '🎖️', name: 'Spécialiste', desc: 'Discipline choisie' },
+      { id: 'b_compagne', icon: '💫', name: 'Compagne idéale', desc: 'Nous suit partout' },
+    ]
+  },
+];
+
+const phasesEl = document.getElementById('phases');
+const jumpNavEl = document.getElementById('jumpNav');
+
+function render() {
+  // Ajouter "Matériel" en première pill
+  const matLink = document.createElement('a');
+  matLink.className = 'jump-pill';
+  matLink.href = '#materiel';
+  matLink.textContent = '00 · Matériel';
+  jumpNavEl.appendChild(matLink);
+
+  // Ajouter "Journal" en deuxième pill
+  const logLink = document.createElement('a');
+  logLink.className = 'jump-pill';
+  logLink.href = '#logbook';
+  logLink.textContent = '📖 Journal';
+  jumpNavEl.appendChild(logLink);
+
+  PHASES.forEach(phase => {
+    const a = document.createElement('a');
+    a.className = 'jump-pill';
+    a.href = `#${phase.id}`;
+    a.textContent = `${phase.num} · ${phase.title}`;
+    jumpNavEl.appendChild(a);
+  });
+
+  PHASES.forEach(phase => {
+    const phaseEl = document.createElement('section');
+    phaseEl.className = 'phase';
+    phaseEl.id = phase.id;
+
+    let html = `
+      <div class="phase-header">
+        <div class="phase-num">${phase.num}</div>
+        <div class="phase-title-block">
+          <h2 class="phase-title">${phase.title}</h2>
+          <div class="phase-meta">${phase.age}</div>
+        </div>
+      </div>
+      <div class="phase-narrative">${phase.narrative}</div>
+      <div class="phase-summary">
+        <div class="phase-summary-title">▸ Ce mois-ci, en gros</div>
+        <div class="phase-summary-content">${phase.summary}</div>
+      </div>
+    `;
+
+    phase.weeks.forEach(week => {
+      const totalItems = week.blocks.reduce((s, b) => s + b.items.length, 0);
+      html += `
+        <div class="week" data-week="${week.id}">
+          <div class="week-head" data-toggle="${week.id}">
+            <span class="week-tag">${week.tag}</span>
+            <span class="week-title">${week.title}</span>
+            <span class="week-count" id="${week.id}-count">0/${totalItems}</span>
+            <span class="week-chevron"></span>
+          </div>
+          <div class="week-progress-track"><div class="week-progress-fill" id="${week.id}-bar" style="width:0%"></div></div>
+          <div class="week-body"><div class="week-body-inner">
+      `;
+
+      week.blocks.forEach((block, bIdx) => {
+        const icon = ICONS[block.type] || '•';
+        html += `<div class="task-block">
+          <div class="task-block-title">
+            <span class="task-block-icon icon-${getIconColorClass(block.type)}">${icon}</span>
+            ${block.title}
+          </div>
+        `;
+        block.items.forEach((item, iIdx) => {
+          const id = `${week.id}-b${bIdx}-i${iIdx}`;
+          html += `
+            <label class="task">
+              <input type="checkbox" data-key="${id}" data-week="${week.id}" data-phase="${phase.id}">
+              <span class="task-text">${item}</span>
+            </label>
+          `;
+        });
+        html += `</div>`;
+      });
+
+      html += `</div></div></div>`;
+    });
+
+    if (phase.badges && phase.badges.length) {
+      html += `<div class="achievements">
+        <div class="achievements-header">
+          <div class="achievements-title">Achievements · ${phase.title}</div>
+          <div class="achievements-sub">Cliquer pour débloquer · grands moments</div>
+        </div>
+        <div class="badges-grid">`;
+      phase.badges.forEach(b => {
+        html += `
+          <div class="badge" data-key="badge-${b.id}" data-phase="${phase.id}">
+            <div class="badge-icon">${b.icon}</div>
+            <div class="badge-name">${b.name}</div>
+            <div class="badge-desc">${b.desc}</div>
+          </div>
+        `;
+      });
+      html += `</div></div>`;
+    }
+
+    phaseEl.innerHTML = html;
+    phasesEl.appendChild(phaseEl);
+  });
+
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', onCheckChange);
+  });
+  document.querySelectorAll('.badge').forEach(b => {
+    b.addEventListener('click', onBadgeClick);
+  });
+  document.querySelectorAll('[data-toggle]').forEach(h => {
+    h.addEventListener('click', () => {
+      h.parentElement.classList.toggle('open');
+      saveOpenState();
+    });
+  });
+}
+
+function getIconColorClass(type) {
+  const map = {
+    health: 'health', care: 'care',
+    solo: 'solo', mind: 'mind',
+    learn: 'learn', walk: 'walk',
+    social: 'social', place: 'place', train: 'place', cafe: 'social', bar: 'social',
+    life: 'life', food: 'life', game: 'game', shop: 'life',
+    sleep: 'solo', run: 'walk', hike: 'walk',
+    feel: 'feel', sound: 'sound', event: 'event',
+  };
+  return map[type] || 'life';
+}
+
+let state = {};
+let openWeeks = {};
+let entries = [];
+let currentAuthor = 'Clément';
+let db = null;
+let isApplying = false;
+let saveTimeout = null;
+
+function showSync(text, isError = false) {
+  const ind = document.getElementById('syncIndicator');
+  document.getElementById('syncText').textContent = text;
+  ind.classList.toggle('error', isError);
+  ind.classList.add('visible');
+  clearTimeout(showSync._t);
+  showSync._t = setTimeout(() => ind.classList.remove('visible'), 1500);
+}
+
+async function loadState() {
+  if (!db) return;
+  try {
+    const { doc, getDoc, onSnapshot } = window.fb;
+    const docRef = doc(db, 'bookie', 'journal');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      state = data.state || {};
+      openWeeks = data.openWeeks || {};
+      entries = data.entries || [];
+    } else {
+      state = {};
+      openWeeks = {};
+      entries = [];
+    }
+
+    // Listen for real-time updates from the other device
+    onSnapshot(docRef, (snap) => {
+      if (!snap.exists()) return;
+      const data = snap.data();
+      isApplying = true;
+      state = data.state || {};
+      openWeeks = data.openWeeks || {};
+      entries = data.entries || [];
+      applyState();
+      renderEntries();
+      updateAll();
+      isApplying = false;
+      showSync('Mis à jour');
+    });
+  } catch (e) {
+    console.error('Load error', e);
+    state = {};
+    openWeeks = {};
+    entries = [];
+    showSync('Erreur de chargement', true);
+  }
+
+  applyState();
+  renderEntries();
+  updateAll();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+}
+
+async function saveState() {
+  if (!db || isApplying) return;
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    try {
+      const { doc, setDoc } = window.fb;
+      await setDoc(doc(db, 'bookie', 'journal'), { state, openWeeks, entries, updatedAt: Date.now() });
+      showSync('Sauvegardé');
+    } catch (e) {
+      console.error('Save error', e);
+      showSync('Erreur de sauvegarde', true);
+    }
+  }, 300);
+}
+
+async function saveOpenState() {
+  document.querySelectorAll('.week').forEach(w => {
+    openWeeks[w.dataset.week] = w.classList.contains('open');
+  });
+  saveState();
+}
+
+function applyState() {
+  Object.keys(state).forEach(k => {
+    if (!state[k]) return;
+    const cb = document.querySelector(`input[data-key="${k}"]`);
+    if (cb) cb.checked = true;
+    const mat = document.querySelector(`input[data-mat="${k}"]`);
+    if (mat) mat.checked = true;
+    const b = document.querySelector(`.badge[data-key="${k}"]`);
+    if (b) b.classList.add('unlocked');
+  });
+  Object.keys(openWeeks).forEach(wid => {
+    if (openWeeks[wid]) {
+      const w = document.querySelector(`.week[data-week="${wid}"]`);
+      if (w) w.classList.add('open');
+    }
+  });
+  if (Object.keys(openWeeks).length === 0) {
+    const first = document.querySelector('.week');
+    if (first) first.classList.add('open');
+  }
+}
+
+function onCheckChange(e) {
+  const key = e.target.dataset.key || e.target.dataset.mat;
+  state[key] = e.target.checked;
+  saveState();
+  updateAll();
+  if (e.target.checked) miniConfetti(e.target);
+}
+
+function onBadgeClick(e) {
+  const b = e.currentTarget;
+  const k = b.dataset.key;
+  const wasUnlocked = b.classList.contains('unlocked');
+  if (wasUnlocked) {
+    b.classList.remove('unlocked');
+    state[k] = false;
+  } else {
+    b.classList.add('unlocked', 'just-unlocked');
+    state[k] = true;
+    bigConfetti(b);
+    setTimeout(() => b.classList.remove('just-unlocked'), 600);
+  }
+  saveState();
+  updateAll();
+}
+
+function updateAll() {
+  let totalAll = 0, doneAll = 0, badgesDone = 0, weeksDone = 0, matDone = 0;
+
+  PHASES.forEach(phase => {
+    phase.weeks.forEach(week => {
+      const inputs = document.querySelectorAll(`input[data-week="${week.id}"]`);
+      let total = inputs.length, done = 0;
+      inputs.forEach(i => { if (i.checked) done++; });
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      const c = document.getElementById(`${week.id}-count`);
+      const bar = document.getElementById(`${week.id}-bar`);
+      if (c) c.textContent = `${done}/${total}`;
+      if (bar) bar.style.width = `${pct}%`;
+      if (done === total && total > 0) weeksDone++;
+      totalAll += total;
+      doneAll += done;
+    });
+    phase.badges.forEach(badge => {
+      const el = document.querySelector(`.badge[data-key="badge-${badge.id}"]`);
+      if (el && el.classList.contains('unlocked')) badgesDone++;
+      totalAll++;
+      if (el && el.classList.contains('unlocked')) doneAll++;
+    });
+  });
+
+  document.querySelectorAll('input[data-mat]').forEach(m => {
+    totalAll++;
+    if (m.checked) { matDone++; doneAll++; }
+  });
+
+  const pct = totalAll ? Math.round((doneAll / totalAll) * 100) : 0;
+  document.getElementById('globalCount').textContent = `${doneAll} / ${totalAll}`;
+  document.getElementById('globalFill').style.width = `${pct}%`;
+  document.getElementById('badgeCount').textContent = badgesDone;
+  document.getElementById('weekCount').textContent = weeksDone;
+  document.getElementById('matCount').textContent = matDone;
+}
+
+const CONF_COLORS = ['#c44d2a', '#d4922a', '#6b7a3a', '#7a3a55', '#4a7a8f', '#faf6ed'];
+
+function miniConfetti(el) {
+  const r = el.getBoundingClientRect();
+  for (let i = 0; i < 6; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = (r.left + r.width / 2) + 'px';
+    c.style.top = r.top + 'px';
+    c.style.background = CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)];
+    c.style.setProperty('--tx', ((Math.random() - 0.5) * 100) + 'px');
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2000);
+  }
+}
+
+function bigConfetti(el) {
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  for (let i = 0; i < 36; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = cx + 'px';
+    c.style.top = cy + 'px';
+    c.style.background = CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)];
+    const angle = (Math.PI * 2 * i) / 36;
+    const dist = 80 + Math.random() * 180;
+    c.style.setProperty('--tx', (Math.cos(angle) * dist) + 'px');
+    c.style.animationDuration = (1.4 + Math.random() * 1.2) + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+
+// ============ JOURNAL LIBRE FUNCTIONS ============
+
+const QUICK_LABELS = {
+  pee: { emoji: '💧', label: 'Pipi', tag: 'pee' },
+  poop: { emoji: '💩', label: 'Caca', tag: 'poop' },
+  eat: { emoji: '🥣', label: 'Repas', tag: 'eat' },
+  walk: { emoji: '🚶', label: 'Sortie', tag: 'walk' },
+  sleep: { emoji: '🌙', label: 'Sieste', tag: 'sleep' },
+};
+
+const DAY_LABELS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+const MONTH_LABELS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+
+function formatDayLabel(dateStr) {
+  // dateStr = "YYYY-MM-DD"
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (date.getTime() === today.getTime()) return "Aujourd'hui";
+  if (date.getTime() === yesterday.getTime()) return "Hier";
+  return `${DAY_LABELS[date.getDay()]} ${d} ${MONTH_LABELS[m - 1]}`;
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const h = String(d.getHours()).padStart(2, '0');
+  const m = String(d.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
+}
+
+function dayKey(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function newEntry(text, quickType, author) {
+  return {
+    id: 'e_' + Date.now() + '_' + Math.floor(Math.random() * 9999),
+    ts: Date.now(),
+    text: text || '',
+    quick: quickType || null,
+    author: author || 'Anonyme',
+  };
+}
+
+function addEntry(text, quickType) {
+  const author = currentAuthor;
+  const trimmed = (text || '').trim();
+  if (!trimmed && !quickType) return;
+  entries.push(newEntry(trimmed, quickType, author));
+  saveState();
+  renderEntries();
+}
+
+function deleteEntry(id) {
+  if (!confirm('Supprimer cette entrée ?')) return;
+  entries = entries.filter(e => e.id !== id);
+  saveState();
+  renderEntries();
+}
+
+function editEntry(id, newText) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  const trimmed = (newText || '').trim();
+  if (!trimmed && !e.quick) {
+    // empty + no quick tag = delete
+    entries = entries.filter(x => x.id !== id);
+  } else {
+    e.text = trimmed;
+  }
+  saveState();
+  renderEntries();
+}
+
+function renderEntries() {
+  const container = document.getElementById('logbookEntries');
+  if (!container) return;
+
+  if (!entries.length) {
+    container.innerHTML = '<div class="logbook-empty">Aucune entrée pour l\'instant. Tape ta première note au-dessus 🐾</div>';
+    return;
+  }
+
+  // Sort by ts desc
+  const sorted = [...entries].sort((a, b) => b.ts - a.ts);
+
+  // Group by day
+  const groups = {};
+  sorted.forEach(e => {
+    const k = dayKey(e.ts);
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(e);
+  });
+
+  let html = '';
+  Object.keys(groups).forEach(k => {
+    const dayEntries = groups[k];
+    // count quick types for day stats
+    const counts = { pee: 0, poop: 0, eat: 0, walk: 0, sleep: 0 };
+    dayEntries.forEach(e => { if (e.quick && counts[e.quick] !== undefined) counts[e.quick]++; });
+    const statsParts = [];
+    if (counts.pee) statsParts.push(`💧${counts.pee}`);
+    if (counts.poop) statsParts.push(`💩${counts.poop}`);
+    if (counts.eat) statsParts.push(`🥣${counts.eat}`);
+    if (counts.walk) statsParts.push(`🚶${counts.walk}`);
+    if (counts.sleep) statsParts.push(`🌙${counts.sleep}`);
+    const statsStr = statsParts.length ? `<span class="day-stats">${statsParts.join(' · ')}</span>` : '';
+
+    html += `<div class="day-group">`;
+    html += `<div class="day-label">${escapeHtml(formatDayLabel(k))}${statsStr}</div>`;
+
+    dayEntries.forEach(e => {
+      const time = formatTime(e.ts);
+      const isQuick = !!e.quick && !e.text;
+      let contentHtml = '';
+      if (e.quick) {
+        const q = QUICK_LABELS[e.quick];
+        contentHtml += `<span class="entry-tag ${q.tag}">${q.emoji} ${q.label}</span>`;
+      }
+      if (e.text) {
+        contentHtml += escapeHtml(e.text).replace(/\n/g, '<br>');
+      }
+      const authorTag = e.author ? `<span class="entry-author">${escapeHtml(e.author)}</span>` : '';
+
+      html += `
+        <div class="entry${isQuick ? ' is-quick' : ''}" data-id="${e.id}">
+          <div class="entry-time">${time}</div>
+          <div class="entry-content" data-id="${e.id}">${contentHtml}${authorTag}</div>
+          <button class="entry-delete" data-delete="${e.id}" title="Supprimer">✕</button>
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Attach handlers
+  container.querySelectorAll('[data-delete]').forEach(b => {
+    b.addEventListener('click', () => deleteEntry(b.dataset.delete));
+  });
+  container.querySelectorAll('.entry-content[data-id]').forEach(c => {
+    c.addEventListener('dblclick', () => startEdit(c));
+  });
+}
+
+function startEdit(contentEl) {
+  const id = contentEl.dataset.id;
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  contentEl.contentEditable = 'true';
+  contentEl.textContent = e.text || '';
+  contentEl.focus();
+  // Place cursor at end
+  const range = document.createRange();
+  range.selectNodeContents(contentEl);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  const finish = () => {
+    contentEl.contentEditable = 'false';
+    const newText = contentEl.textContent;
+    editEntry(id, newText);
+    contentEl.removeEventListener('blur', finish);
+    contentEl.removeEventListener('keydown', onKey);
+  };
+  const onKey = (ev) => {
+    if (ev.key === 'Enter' && !ev.shiftKey) {
+      ev.preventDefault();
+      contentEl.blur();
+    } else if (ev.key === 'Escape') {
+      ev.preventDefault();
+      renderEntries();
+    }
+  };
+  contentEl.addEventListener('blur', finish);
+  contentEl.addEventListener('keydown', onKey);
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function attachStaticHandlers() {
+  // Matériel checkbox events
+  document.querySelectorAll('input[data-mat]').forEach(cb => {
+    cb.addEventListener('change', onCheckChange);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', async () => {
+    if (!confirm('Réinitialiser TOUT le carnet (cases, badges, journal de bord) ? Action irréversible.')) return;
+    state = {};
+    openWeeks = {};
+    entries = [];
+    await saveState();
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('.badge').forEach(b => b.classList.remove('unlocked'));
+    renderEntries();
+    updateAll();
+  });
+
+  // ===== LOGBOOK HANDLERS =====
+  const composerText = document.getElementById('composerText');
+  const composerSubmit = document.getElementById('composerSubmit');
+
+  // Submit on click
+  composerSubmit.addEventListener('click', () => {
+    const txt = composerText.value;
+    if (txt.trim()) {
+      addEntry(txt, null);
+      composerText.value = '';
+    }
+  });
+
+  // Submit on Cmd/Ctrl + Enter
+  composerText.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      composerSubmit.click();
+    }
+  });
+
+  // Quick buttons: log immediately + include any text typed
+  document.querySelectorAll('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const quickType = btn.dataset.quick;
+      const txt = composerText.value;
+      addEntry(txt, quickType);
+      composerText.value = '';
+    });
+  });
+
+  // Author switcher
+  document.querySelectorAll('.author-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.author-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentAuthor = pill.dataset.author;
+      try { localStorage.setItem('bookie-author', currentAuthor); } catch (e) {}
+    });
+  });
+
+  // Restore last author
+  try {
+    const savedAuthor = localStorage.getItem('bookie-author');
+    if (savedAuthor) {
+      currentAuthor = savedAuthor;
+      document.querySelectorAll('.author-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.author === savedAuthor);
+      });
+    }
+  } catch (e) {}
+}
+
+// ===== INIT: Lock screen + Firebase =====
+const PASSWORD = 'bookie2026';
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBJVOoZxTzJn9edW4Me6WMbiE_7p56IBMk",
+  authDomain: "bookie-journal.firebaseapp.com",
+  projectId: "bookie-journal",
+  storageBucket: "bookie-journal.firebasestorage.app",
+  messagingSenderId: "120345473552",
+  appId: "1:120345473552:web:c3d6e732053f7149131095"
+};
+
+function unlock() {
+  document.getElementById('lockScreen').style.display = 'none';
+  render();
+  attachStaticHandlers();
+  initFirebaseAndLoad();
+}
+
+// Persist unlock in this browser
+const STORAGE_UNLOCK_KEY = 'bookie-unlocked';
+
+document.getElementById('lockBtn').addEventListener('click', tryUnlock);
+document.getElementById('lockInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') tryUnlock();
+});
+
+function tryUnlock() {
+  const v = document.getElementById('lockInput').value;
+  if (v === PASSWORD) {
+    try { localStorage.setItem(STORAGE_UNLOCK_KEY, '1'); } catch (e) {}
+    unlock();
+  } else {
+    const err = document.getElementById('lockError');
+    err.textContent = 'Mot de passe incorrect';
+    document.getElementById('lockInput').value = '';
+    setTimeout(() => { err.textContent = ''; }, 2500);
+  }
+}
+
+// Auto-unlock if previously authenticated on this browser
+try {
+  if (localStorage.getItem(STORAGE_UNLOCK_KEY) === '1') {
+    unlock();
+  }
+} catch (e) {}
+
+async function initFirebaseAndLoad() {
+  try {
+    const fbApp = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js');
+    const fbStore = await import('https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js');
+    const app = fbApp.initializeApp(FIREBASE_CONFIG);
+    db = fbStore.getFirestore(app);
+    window.fb = {
+      doc: fbStore.doc,
+      getDoc: fbStore.getDoc,
+      setDoc: fbStore.setDoc,
+      onSnapshot: fbStore.onSnapshot
+    };
+    await loadState();
+  } catch (e) {
+    console.error('Firebase init error', e);
+    showSync('Erreur de connexion', true);
+    document.getElementById('loading').textContent = 'Erreur de connexion à la base. Vérifiez votre internet.';
+  }
+}
+</script>
+</body>
+</html>
